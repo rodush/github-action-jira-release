@@ -1,0 +1,41 @@
+{
+  "name": "jira-release",
+  "version": "1.0.0",
+  "description": "Github Action which creates a new release in Jira to synchronize with the Release in Github.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "lint": "prettier -c ./src/**/*.js",
+    "lint-fix": "prettier -w ./src/**/*.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rodush/github-action-jira-release.git"
+  },
+  "keywords": [
+    "jira",
+    "release",
+    "gha",
+    "github",
+    "actions"
+  ],
+  "author": "Roman Dushko <rodush@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rodush/github-action-jira-release/issues"
+  },
+  "homepage": "https://github.com/rodush/github-action-jira-release#readme",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "prettier": "^2.7.1",
+    "rollup": "^2.77.2"
+  },
+  "dependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/github": "^5.0.3",
+    "got": "^12.3.0"
+  }
+}
