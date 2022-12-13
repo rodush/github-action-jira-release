@@ -4,28 +4,30 @@ var require$$0 = require('fs');
 var require$$1$1 = require('os');
 var http$4 = require('http');
 var require$$2$2 = require('https');
-var require$$0$6 = require('net');
+var require$$0$4 = require('net');
 var require$$1$2 = require('tls');
-var require$$0$1 = require('events');
+var require$$4$1 = require('events');
 var require$$5 = require('assert');
 var require$$6 = require('util');
 var Stream = require('stream');
 var Url = require('url');
-var require$$0$2 = require('punycode');
-var zlib$2 = require('zlib');
-var require$$0$3 = require('path');
-var node_events = require('node:events');
+var require$$0$1 = require('punycode');
+var zlib$1 = require('zlib');
+var require$$0$2 = require('path');
+var EventEmitter$2 = require('node:events');
 var process$1 = require('node:process');
 var node_buffer = require('node:buffer');
-var node_stream = require('node:stream');
-var node_url = require('node:url');
+var stream$2 = require('node:stream');
+var urlLib = require('node:url');
 var http$5 = require('node:http');
-var require$$0$4 = require('buffer');
+var crypto$1 = require('node:crypto');
+var require$$0$3 = require('buffer');
 var node_util = require('node:util');
 var net = require('node:net');
 var node_tls = require('node:tls');
 var https$4 = require('node:https');
-var require$$0$5 = require('dns');
+var node_dns = require('node:dns');
+var os$2 = require('node:os');
 var require$$3$1 = require('http2');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -34,22 +36,26 @@ var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
 var http__default = /*#__PURE__*/_interopDefaultLegacy(http$4);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2$2);
-var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
+var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
 var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$2);
-var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
+var require$$4__default = /*#__PURE__*/_interopDefaultLegacy(require$$4$1);
 var require$$5__default = /*#__PURE__*/_interopDefaultLegacy(require$$5);
 var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
 var Stream__default = /*#__PURE__*/_interopDefaultLegacy(Stream);
 var Url__default = /*#__PURE__*/_interopDefaultLegacy(Url);
+var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
+var zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib$1);
 var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
-var zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib$2);
-var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$3);
+var EventEmitter__default = /*#__PURE__*/_interopDefaultLegacy(EventEmitter$2);
 var process__default = /*#__PURE__*/_interopDefaultLegacy(process$1);
+var stream__default = /*#__PURE__*/_interopDefaultLegacy(stream$2);
+var urlLib__default = /*#__PURE__*/_interopDefaultLegacy(urlLib);
 var http__default$1 = /*#__PURE__*/_interopDefaultLegacy(http$5);
-var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
+var crypto__default = /*#__PURE__*/_interopDefaultLegacy(crypto$1);
+var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$3);
 var net__default = /*#__PURE__*/_interopDefaultLegacy(net);
 var https__default = /*#__PURE__*/_interopDefaultLegacy(https$4);
-var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
+var os__default = /*#__PURE__*/_interopDefaultLegacy(os$2);
 var require$$3__default = /*#__PURE__*/_interopDefaultLegacy(require$$3$1);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -87,7 +93,7 @@ Object.defineProperty(context$1, "__esModule", { value: true });
 context$1.Context = void 0;
 const fs_1 = require$$0__default["default"];
 const os_1 = require$$1__default["default"];
-class Context$2 {
+class Context$1 {
     /**
      * Hydrate the context from the environment
      */
@@ -134,7 +140,7 @@ class Context$2 {
         throw new Error("context.repo requires a GITHUB_REPOSITORY environment variable like 'owner/repo'");
     }
 }
-context$1.Context = Context$2;
+context$1.Context = Context$1;
 
 var utils$3 = {};
 
@@ -211,7 +217,7 @@ var tunnel = {};
 var tls$4 = require$$1__default$1["default"];
 var http$3 = http__default["default"];
 var https$3 = require$$2__default["default"];
-var events = require$$0__default$1["default"];
+var events = require$$4__default["default"];
 var util = require$$6__default["default"];
 
 
@@ -278,7 +284,7 @@ util.inherits(TunnelingAgent, events.EventEmitter);
 
 TunnelingAgent.prototype.addRequest = function addRequest(req, host, port, localAddress) {
   var self = this;
-  var options = mergeOptions$2({request: req}, self.options, toOptions(host, port, localAddress));
+  var options = mergeOptions({request: req}, self.options, toOptions(host, port, localAddress));
 
   if (self.sockets.length >= this.maxSockets) {
     // We are over limit so we'll add it to the queue.
@@ -311,7 +317,7 @@ TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
   var placeholder = {};
   self.sockets.push(placeholder);
 
-  var connectOptions = mergeOptions$2({}, self.proxyOptions, {
+  var connectOptions = mergeOptions({}, self.proxyOptions, {
     method: 'CONNECT',
     path: options.host + ':' + options.port,
     agent: false,
@@ -412,7 +418,7 @@ function createSecureSocket(options, cb) {
   var self = this;
   TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
     var hostHeader = options.request.getHeader('host');
-    var tlsOptions = mergeOptions$2({}, self.options, {
+    var tlsOptions = mergeOptions({}, self.options, {
       socket: socket,
       servername: hostHeader ? hostHeader.replace(/:.*$/, '') : options.host
     });
@@ -436,7 +442,7 @@ function toOptions(host, port, localAddress) {
   return host; // for v0.11 or later
 }
 
-function mergeOptions$2(target) {
+function mergeOptions(target) {
   for (var i = 1, len = arguments.length; i < len; ++i) {
     var overrides = arguments[i];
     if (typeof overrides === 'object') {
@@ -1080,28 +1086,28 @@ tunnel.debug = debug; // for test
 	
 } (lib$1));
 
-var __createBinding$4 = (commonjsGlobal && commonjsGlobal.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+var __createBinding$3 = (commonjsGlobal && commonjsGlobal.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-var __setModuleDefault$4 = (commonjsGlobal && commonjsGlobal.__setModuleDefault) || (Object.create ? (function(o, v) {
+var __setModuleDefault$3 = (commonjsGlobal && commonjsGlobal.__setModuleDefault) || (Object.create ? (function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar$4 = (commonjsGlobal && commonjsGlobal.__importStar) || function (mod) {
+var __importStar$3 = (commonjsGlobal && commonjsGlobal.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding$4(result, mod, k);
-    __setModuleDefault$4(result, mod);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding$3(result, mod, k);
+    __setModuleDefault$3(result, mod);
     return result;
 };
 Object.defineProperty(utils$2, "__esModule", { value: true });
 utils$2.getApiBaseUrl = utils$2.getProxyAgent = utils$2.getAuthString = void 0;
-const httpClient = __importStar$4(lib$1);
+const httpClient = __importStar$3(lib$1);
 function getAuthString(token, options) {
     if (!token && !options.auth) {
         throw new Error('Parameter token or opts.auth is required');
@@ -1237,45 +1243,49 @@ var removeHook = remove;
 var bind = Function.bind;
 var bindable = bind.bind(bind);
 
-function bindApi (hook, state, name) {
-  var removeHookRef = bindable(removeHook, null).apply(null, name ? [state, name] : [state]);
+function bindApi(hook, state, name) {
+  var removeHookRef = bindable(removeHook, null).apply(
+    null,
+    name ? [state, name] : [state]
+  );
   hook.api = { remove: removeHookRef };
-  hook.remove = removeHookRef
-
-  ;['before', 'error', 'after', 'wrap'].forEach(function (kind) {
+  hook.remove = removeHookRef;
+  ["before", "error", "after", "wrap"].forEach(function (kind) {
     var args = name ? [state, kind, name] : [state, kind];
     hook[kind] = hook.api[kind] = bindable(addHook, null).apply(null, args);
   });
 }
 
-function HookSingular () {
-  var singularHookName = 'h';
+function HookSingular() {
+  var singularHookName = "h";
   var singularHookState = {
-    registry: {}
+    registry: {},
   };
   var singularHook = register.bind(null, singularHookState, singularHookName);
   bindApi(singularHook, singularHookState, singularHookName);
-  return singularHook
+  return singularHook;
 }
 
-function HookCollection () {
+function HookCollection() {
   var state = {
-    registry: {}
+    registry: {},
   };
 
   var hook = register.bind(null, state);
   bindApi(hook, state);
 
-  return hook
+  return hook;
 }
 
 var collectionHookDeprecationMessageDisplayed = false;
-function Hook () {
+function Hook() {
   if (!collectionHookDeprecationMessageDisplayed) {
-    console.warn('[before-after-hook]: "Hook()" repurposing warning, use "Hook.Collection()". Read more: https://git.io/upgrade-before-after-hook-to-1.4');
+    console.warn(
+      '[before-after-hook]: "Hook()" repurposing warning, use "Hook.Collection()". Read more: https://git.io/upgrade-before-after-hook-to-1.4'
+    );
     collectionHookDeprecationMessageDisplayed = true;
   }
-  return HookCollection()
+  return HookCollection();
 }
 
 Hook.Singular = HookSingular.bind();
@@ -1320,7 +1330,7 @@ function isPlainObject$1(o) {
   return true;
 }
 
-function lowercaseKeys$5(object) {
+function lowercaseKeys$1(object) {
     if (!object) {
         return {};
     }
@@ -1364,7 +1374,7 @@ function merge(defaults, route, options) {
         options = Object.assign({}, route);
     }
     // lowercase header names before merging with defaults to avoid duplicates
-    options.headers = lowercaseKeys$5(options.headers);
+    options.headers = lowercaseKeys$1(options.headers);
     // remove properties with undefined values before merging
     removeUndefinedProperties(options);
     removeUndefinedProperties(options.headers);
@@ -79568,7 +79578,7 @@ var require$$1 = [
 	]
 ];
 
-var punycode = require$$0__default$2["default"];
+var punycode = require$$0__default$1["default"];
 var mappingTable = require$$1;
 
 var PROCESSING_OPTIONS = {
@@ -79761,7 +79771,7 @@ tr46.toUnicode = function(domain_name, useSTD3) {
 tr46.PROCESSING_OPTIONS = PROCESSING_OPTIONS;
 
 (function (module) {
-	const punycode = require$$0__default$2["default"];
+	const punycode = require$$0__default$1["default"];
 	const tr46$1 = tr46;
 
 	const specialSchemes = {
@@ -81468,7 +81478,7 @@ publicApi.parseURL = urlStateMachine.exports.parseURL;
 // Based on https://github.com/tmpvar/jsdom/blob/aa85b2abf07766ff7bf5c1f6daafb3726f2f2db5/lib/jsdom/living/blob.js
 
 // fix for "Readable" isn't a named export issue
-const Readable$2 = Stream__default["default"].Readable;
+const Readable$1 = Stream__default["default"].Readable;
 
 const BUFFER = Symbol('buffer');
 const TYPE = Symbol('type');
@@ -81527,7 +81537,7 @@ class Blob {
 		return Promise.resolve(ab);
 	}
 	stream() {
-		const readable = new Readable$2();
+		const readable = new Readable$1();
 		readable._read = function () {};
 		readable.push(this[BUFFER]);
 		readable.push(null);
@@ -81620,7 +81630,7 @@ try {
 const INTERNALS = Symbol('Body internals');
 
 // fix an issue where "PassThrough" isn't a named export for node <10
-const PassThrough$2 = Stream__default["default"].PassThrough;
+const PassThrough$1 = Stream__default["default"].PassThrough;
 
 /**
  * Body mixin
@@ -81997,8 +82007,8 @@ function clone(instance) {
 	// note: we can't clone the form-data object without having it as a dependency
 	if (body instanceof Stream__default["default"] && typeof body.getBoundary !== 'function') {
 		// tee instance body
-		p1 = new PassThrough$2();
-		p2 = new PassThrough$2();
+		p1 = new PassThrough$1();
+		p2 = new PassThrough$1();
 		body.pipe(p1);
 		body.pipe(p2);
 		// set instance body to teed body and return the other teed body
@@ -82506,7 +82516,7 @@ const STATUS_CODES = http__default["default"].STATUS_CODES;
  * @param   Object  opts  Response options
  * @return  Void
  */
-class Response$2 {
+class Response$1 {
 	constructor() {
 		let body = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 		let opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -82565,7 +82575,7 @@ class Response$2 {
   * @return  Response
   */
 	clone() {
-		return new Response$2(clone(this), {
+		return new Response$1(clone(this), {
 			url: this.url,
 			status: this.status,
 			statusText: this.statusText,
@@ -82576,9 +82586,9 @@ class Response$2 {
 	}
 }
 
-Body.mixIn(Response$2.prototype);
+Body.mixIn(Response$1.prototype);
 
-Object.defineProperties(Response$2.prototype, {
+Object.defineProperties(Response$1.prototype, {
 	url: { enumerable: true },
 	status: { enumerable: true },
 	ok: { enumerable: true },
@@ -82588,7 +82598,7 @@ Object.defineProperties(Response$2.prototype, {
 	clone: { enumerable: true }
 });
 
-Object.defineProperty(Response$2.prototype, Symbol.toStringTag, {
+Object.defineProperty(Response$1.prototype, Symbol.toStringTag, {
 	value: 'Response',
 	writable: false,
 	enumerable: false,
@@ -82630,7 +82640,7 @@ const streamDestructionSupported = 'destroy' in Stream__default["default"].Reada
  * @param   Mixed   input
  * @return  Boolean
  */
-function isRequest$3(input) {
+function isRequest$1(input) {
 	return typeof input === 'object' && typeof input[INTERNALS$2] === 'object';
 }
 
@@ -82653,7 +82663,7 @@ class Request$1 {
 		let parsedURL;
 
 		// normalize input
-		if (!isRequest$3(input)) {
+		if (!isRequest$1(input)) {
 			if (input && input.href) {
 				// in order to support Node.js' Url objects; though WHATWG's URL objects
 				// will fall into this branch also (since their `toString()` will return
@@ -82671,11 +82681,11 @@ class Request$1 {
 		let method = init.method || input.method || 'GET';
 		method = method.toUpperCase();
 
-		if ((init.body != null || isRequest$3(input) && input.body !== null) && (method === 'GET' || method === 'HEAD')) {
+		if ((init.body != null || isRequest$1(input) && input.body !== null) && (method === 'GET' || method === 'HEAD')) {
 			throw new TypeError('Request with GET/HEAD method cannot have body');
 		}
 
-		let inputBody = init.body != null ? init.body : isRequest$3(input) && input.body !== null ? clone(input) : null;
+		let inputBody = init.body != null ? init.body : isRequest$1(input) && input.body !== null ? clone(input) : null;
 
 		Body.call(this, inputBody, {
 			timeout: init.timeout || input.timeout || 0,
@@ -82691,7 +82701,7 @@ class Request$1 {
 			}
 		}
 
-		let signal = isRequest$3(input) ? input.signal : null;
+		let signal = isRequest$1(input) ? input.signal : null;
 		if ('signal' in init) signal = init.signal;
 
 		if (signal != null && !isAbortSignal(signal)) {
@@ -83072,7 +83082,7 @@ function fetch(url, opts) {
 			// 4. no content response (204)
 			// 5. content not modified response (304)
 			if (!request.compress || request.method === 'HEAD' || codings === null || res.statusCode === 204 || res.statusCode === 304) {
-				response = new Response$2(body, response_options);
+				response = new Response$1(body, response_options);
 				resolve(response);
 				return;
 			}
@@ -83090,7 +83100,7 @@ function fetch(url, opts) {
 			// for gzip
 			if (codings == 'gzip' || codings == 'x-gzip') {
 				body = body.pipe(zlib__default["default"].createGunzip(zlibOptions));
-				response = new Response$2(body, response_options);
+				response = new Response$1(body, response_options);
 				resolve(response);
 				return;
 			}
@@ -83107,7 +83117,7 @@ function fetch(url, opts) {
 					} else {
 						body = body.pipe(zlib__default["default"].createInflateRaw());
 					}
-					response = new Response$2(body, response_options);
+					response = new Response$1(body, response_options);
 					resolve(response);
 				});
 				return;
@@ -83116,13 +83126,13 @@ function fetch(url, opts) {
 			// for br
 			if (codings == 'br' && typeof zlib__default["default"].createBrotliDecompress === 'function') {
 				body = body.pipe(zlib__default["default"].createBrotliDecompress());
-				response = new Response$2(body, response_options);
+				response = new Response$1(body, response_options);
 				resolve(response);
 				return;
 			}
 
 			// otherwise, use response as-is
-			response = new Response$2(body, response_options);
+			response = new Response$1(body, response_options);
 			resolve(response);
 		});
 
@@ -83157,7 +83167,7 @@ class Deprecation extends Error {
 
 }
 
-var once$3 = {exports: {}};
+var once$1 = {exports: {}};
 
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
@@ -83194,13 +83204,13 @@ function wrappy$1 (fn, cb) {
 }
 
 var wrappy = wrappy_1;
-once$3.exports = wrappy(once$2);
-once$3.exports.strict = wrappy(onceStrict);
+once$1.exports = wrappy(once);
+once$1.exports.strict = wrappy(onceStrict);
 
-once$2.proto = once$2(function () {
+once.proto = once(function () {
   Object.defineProperty(Function.prototype, 'once', {
     value: function () {
-      return once$2(this)
+      return once(this)
     },
     configurable: true
   });
@@ -83213,7 +83223,7 @@ once$2.proto = once$2(function () {
   });
 });
 
-function once$2 (fn) {
+function once (fn) {
   var f = function () {
     if (f.called) return f.value
     f.called = true;
@@ -83236,12 +83246,12 @@ function onceStrict (fn) {
   return f
 }
 
-const logOnceCode = once$3.exports((deprecation) => console.warn(deprecation));
-const logOnceHeaders = once$3.exports((deprecation) => console.warn(deprecation));
+const logOnceCode = once$1.exports((deprecation) => console.warn(deprecation));
+const logOnceHeaders = once$1.exports((deprecation) => console.warn(deprecation));
 /**
  * Error with extra properties to help with debugging
  */
-class RequestError$1 extends Error {
+class RequestError$2 extends Error {
     constructor(message, statusCode, options) {
         super(message);
         // Maintains proper stack trace (only available on V8)
@@ -83336,7 +83346,7 @@ function fetchWrapper(requestOptions) {
             if (status < 400) {
                 return;
             }
-            throw new RequestError$1(response.statusText, status, {
+            throw new RequestError$2(response.statusText, status, {
                 response: {
                     url,
                     status,
@@ -83347,7 +83357,7 @@ function fetchWrapper(requestOptions) {
             });
         }
         if (status === 304) {
-            throw new RequestError$1("Not modified", status, {
+            throw new RequestError$2("Not modified", status, {
                 response: {
                     url,
                     status,
@@ -83359,7 +83369,7 @@ function fetchWrapper(requestOptions) {
         }
         if (status >= 400) {
             const data = await getResponseData(response);
-            const error = new RequestError$1(toErrorMessage(data), status, {
+            const error = new RequestError$2(toErrorMessage(data), status, {
                 response: {
                     url,
                     status,
@@ -83381,9 +83391,9 @@ function fetchWrapper(requestOptions) {
         };
     })
         .catch((error) => {
-        if (error instanceof RequestError$1)
+        if (error instanceof RequestError$2)
             throw error;
-        throw new RequestError$1(error.message, 500, {
+        throw new RequestError$2(error.message, 500, {
             request: requestOptions,
         });
     });
@@ -85840,58 +85850,61 @@ var distWeb = /*#__PURE__*/Object.freeze({
 
 var require$$4 = /*@__PURE__*/getAugmentedNamespace(distWeb);
 
-var __createBinding$3 = (commonjsGlobal && commonjsGlobal.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault$3 = (commonjsGlobal && commonjsGlobal.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar$3 = (commonjsGlobal && commonjsGlobal.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding$3(result, mod, k);
-    __setModuleDefault$3(result, mod);
-    return result;
-};
-Object.defineProperty(utils$3, "__esModule", { value: true });
-utils$3.getOctokitOptions = utils$3.GitHub = utils$3.context = void 0;
-const Context$1 = __importStar$3(context$1);
-const Utils = __importStar$3(utils$2);
-// octokit + plugins
-const core_1 = require$$2$1;
-const plugin_rest_endpoint_methods_1 = require$$3;
-const plugin_paginate_rest_1 = require$$4;
-utils$3.context = new Context$1.Context();
-const baseUrl = Utils.getApiBaseUrl();
-const defaults$1 = {
-    baseUrl,
-    request: {
-        agent: Utils.getProxyAgent(baseUrl)
-    }
-};
-utils$3.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(defaults$1);
-/**
- * Convience function to correctly format Octokit Options to pass into the constructor.
- *
- * @param     token    the repo PAT or GITHUB_TOKEN
- * @param     options  other options to set
- */
-function getOctokitOptions(token, options) {
-    const opts = Object.assign({}, options || {}); // Shallow clone - don't mutate the object provided by the caller
-    // Auth
-    const auth = Utils.getAuthString(token, opts);
-    if (auth) {
-        opts.auth = auth;
-    }
-    return opts;
-}
-utils$3.getOctokitOptions = getOctokitOptions;
+(function (exports) {
+	var __createBinding = (commonjsGlobal && commonjsGlobal.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	    if (k2 === undefined) k2 = k;
+	    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+	}) : (function(o, m, k, k2) {
+	    if (k2 === undefined) k2 = k;
+	    o[k2] = m[k];
+	}));
+	var __setModuleDefault = (commonjsGlobal && commonjsGlobal.__setModuleDefault) || (Object.create ? (function(o, v) {
+	    Object.defineProperty(o, "default", { enumerable: true, value: v });
+	}) : function(o, v) {
+	    o["default"] = v;
+	});
+	var __importStar = (commonjsGlobal && commonjsGlobal.__importStar) || function (mod) {
+	    if (mod && mod.__esModule) return mod;
+	    var result = {};
+	    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+	    __setModuleDefault(result, mod);
+	    return result;
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.getOctokitOptions = exports.GitHub = exports.defaults = exports.context = void 0;
+	const Context = __importStar(context$1);
+	const Utils = __importStar(utils$2);
+	// octokit + plugins
+	const core_1 = require$$2$1;
+	const plugin_rest_endpoint_methods_1 = require$$3;
+	const plugin_paginate_rest_1 = require$$4;
+	exports.context = new Context.Context();
+	const baseUrl = Utils.getApiBaseUrl();
+	exports.defaults = {
+	    baseUrl,
+	    request: {
+	        agent: Utils.getProxyAgent(baseUrl)
+	    }
+	};
+	exports.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(exports.defaults);
+	/**
+	 * Convience function to correctly format Octokit Options to pass into the constructor.
+	 *
+	 * @param     token    the repo PAT or GITHUB_TOKEN
+	 * @param     options  other options to set
+	 */
+	function getOctokitOptions(token, options) {
+	    const opts = Object.assign({}, options || {}); // Shallow clone - don't mutate the object provided by the caller
+	    // Auth
+	    const auth = Utils.getAuthString(token, opts);
+	    if (auth) {
+	        opts.auth = auth;
+	    }
+	    return opts;
+	}
+	exports.getOctokitOptions = getOctokitOptions;
+	
+} (utils$3));
 
 var __createBinding$2 = (commonjsGlobal && commonjsGlobal.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -85923,8 +85936,9 @@ var context = github$1.context = new Context.Context();
  * @param     token    the repo PAT or GITHUB_TOKEN
  * @param     options  other options to set
  */
-function getOctokit(token, options) {
-    return new utils_1$2.GitHub(utils_1$2.getOctokitOptions(token, options));
+function getOctokit(token, options, ...additionalPlugins) {
+    const GitHubWithPlugins = utils_1$2.GitHub.plugin(...additionalPlugins);
+    return new GitHubWithPlugins(utils_1$2.getOctokitOptions(token, options));
 }
 getOctokit_1 = github$1.getOctokit = getOctokit;
 
@@ -85994,7 +86008,7 @@ var __importStar$1 = (commonjsGlobal && commonjsGlobal.__importStar) || function
 };
 Object.defineProperty(command, "__esModule", { value: true });
 command.issue = command.issueCommand = void 0;
-const os$2 = __importStar$1(require$$1__default["default"]);
+const os$1 = __importStar$1(require$$1__default["default"]);
 const utils_1$1 = utils;
 /**
  * Commands
@@ -86008,7 +86022,7 @@ const utils_1$1 = utils;
  */
 function issueCommand(command, properties, message) {
     const cmd = new Command(command, properties, message);
-    process.stdout.write(cmd.toString() + os$2.EOL);
+    process.stdout.write(cmd.toString() + os$1.EOL);
 }
 command.issueCommand = issueCommand;
 function issue(name, message = '') {
@@ -86690,8 +86704,8 @@ Object.defineProperty(fileCommand, "__esModule", { value: true });
 fileCommand.prepareKeyValueMessage = fileCommand.issueFileCommand = void 0;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const fs$1 = __importStar(require$$0__default["default"]);
-const os$1 = __importStar(require$$1__default["default"]);
+const fs = __importStar(require$$0__default["default"]);
+const os = __importStar(require$$1__default["default"]);
 const uuid_1 = require$$2;
 const utils_1 = utils;
 function issueFileCommand(command, message) {
@@ -86699,10 +86713,10 @@ function issueFileCommand(command, message) {
     if (!filePath) {
         throw new Error(`Unable to find environment variable for file command ${command}`);
     }
-    if (!fs$1.existsSync(filePath)) {
+    if (!fs.existsSync(filePath)) {
         throw new Error(`Missing file at path: ${filePath}`);
     }
-    fs$1.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os$1.EOL}`, {
+    fs.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
         encoding: 'utf8'
     });
 }
@@ -86719,7 +86733,7 @@ function prepareKeyValueMessage(key, value) {
     if (convertedValue.includes(delimiter)) {
         throw new Error(`Unexpected input: value should not contain the delimiter "${delimiter}"`);
     }
-    return `${key}<<${delimiter}${os$1.EOL}${convertedValue}${os$1.EOL}${delimiter}`;
+    return `${key}<<${delimiter}${os.EOL}${convertedValue}${os.EOL}${delimiter}`;
 }
 fileCommand.prepareKeyValueMessage = prepareKeyValueMessage;
 
@@ -86856,8 +86870,8 @@ function requireOidcUtils () {
 	                .getJson(id_token_url)
 	                .catch(error => {
 	                throw new Error(`Failed to get ID Token. \n 
-	        Error Code : ${error.statusCode}\n 
-	        Error Message: ${error.result.message}`);
+        Error Code : ${error.statusCode}\n 
+        Error Message: ${error.result.message}`);
 	            });
 	            const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
 	            if (!id_token) {
@@ -87213,7 +87227,7 @@ function requirePathUtils () {
 	};
 	Object.defineProperty(pathUtils, "__esModule", { value: true });
 	pathUtils.toPlatformPath = pathUtils.toWin32Path = pathUtils.toPosixPath = void 0;
-	const path = __importStar(require$$0__default$3["default"]);
+	const path = __importStar(require$$0__default$2["default"]);
 	/**
 	 * toPosixPath converts the given path to the posix form. On Windows, \\ will be
 	 * replaced with /.
@@ -87292,7 +87306,7 @@ function requireCore () {
 		const file_command_1 = fileCommand;
 		const utils_1 = utils;
 		const os = __importStar(require$$1__default["default"]);
-		const path = __importStar(require$$0__default$3["default"]);
+		const path = __importStar(require$$0__default$2["default"]);
 		const oidc_utils_1 = requireOidcUtils();
 		/**
 		 * The code to exit an action
@@ -88195,14 +88209,14 @@ class PCancelable {
 Object.setPrototypeOf(PCancelable.prototype, Promise.prototype);
 
 // A hacky check to prevent circular references.
-function isRequest$2(x) {
+function isRequest(x) {
     return is.object(x) && '_onResponse' in x;
 }
 /**
 An error to be thrown when a request fails.
 Contains a `code` property with error class code, like `ECONNREFUSED`.
 */
-class RequestError extends Error {
+class RequestError$1 extends Error {
     constructor(message, error, self) {
         super(message);
         Object.defineProperty(this, "input", {
@@ -88245,7 +88259,7 @@ class RequestError extends Error {
         this.name = 'RequestError';
         this.code = error.code ?? 'ERR_GOT_REQUEST_ERROR';
         this.input = error.input;
-        if (isRequest$2(self)) {
+        if (isRequest(self)) {
             Object.defineProperty(this, 'request', {
                 enumerable: false,
                 value: self,
@@ -88277,7 +88291,7 @@ class RequestError extends Error {
 An error to be thrown when the server redirects you more than ten times.
 Includes a `response` property.
 */
-class MaxRedirectsError extends RequestError {
+class MaxRedirectsError extends RequestError$1 {
     constructor(request) {
         super(`Redirected ${request.options.maxRedirects} times. Aborting.`, {}, request);
         this.name = 'MaxRedirectsError';
@@ -88289,7 +88303,7 @@ An error to be thrown when the server response code is not 2xx nor 3xx if `optio
 Includes a `response` property.
 */
 // eslint-disable-next-line @typescript-eslint/naming-convention
-class HTTPError extends RequestError {
+class HTTPError extends RequestError$1 {
     constructor(response) {
         super(`Response code ${response.statusCode} (${response.statusMessage})`, {}, response.request);
         this.name = 'HTTPError';
@@ -88300,7 +88314,7 @@ class HTTPError extends RequestError {
 An error to be thrown when a cache method fails.
 For example, if the database goes down or there's a filesystem error.
 */
-class CacheError extends RequestError {
+class CacheError$1 extends RequestError$1 {
     constructor(error, request) {
         super(error.message, error, request);
         this.name = 'CacheError';
@@ -88310,7 +88324,7 @@ class CacheError extends RequestError {
 /**
 An error to be thrown when the request body is a stream and an error occurs while reading from that stream.
 */
-class UploadError extends RequestError {
+class UploadError extends RequestError$1 {
     constructor(error, request) {
         super(error.message, error, request);
         this.name = 'UploadError';
@@ -88321,7 +88335,7 @@ class UploadError extends RequestError {
 An error to be thrown when the request is aborted due to a timeout.
 Includes an `event` and `timings` property.
 */
-class TimeoutError$1 extends RequestError {
+class TimeoutError$1 extends RequestError$1 {
     constructor(error, timings, request) {
         super(error.message, error, request);
         Object.defineProperty(this, "timings", {
@@ -88344,7 +88358,7 @@ class TimeoutError$1 extends RequestError {
 /**
 An error to be thrown when reading from response stream fails.
 */
-class ReadError extends RequestError {
+class ReadError extends RequestError$1 {
     constructor(error, request) {
         super(error.message, error, request);
         this.name = 'ReadError';
@@ -88354,7 +88368,7 @@ class ReadError extends RequestError {
 /**
 An error which always triggers a new retry when thrown.
 */
-class RetryError extends RequestError {
+class RetryError extends RequestError$1 {
     constructor(request) {
         super('Retrying', {}, request);
         this.name = 'RetryError';
@@ -88364,7 +88378,7 @@ class RetryError extends RequestError {
 /**
 An error to be thrown when the request is aborted by AbortController.
 */
-class AbortError extends RequestError {
+class AbortError extends RequestError$1 {
     constructor(request) {
         super('This operation was aborted.', {}, request);
         this.code = 'ERR_ABORTED';
@@ -88372,7 +88386,7 @@ class AbortError extends RequestError {
     }
 }
 
-var source$2 = {exports: {}};
+var source$1 = {exports: {}};
 
 (function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -88421,9 +88435,9 @@ var source$2 = {exports: {}};
 	// For CommonJS default export support
 	module.exports = deferToConnect;
 	module.exports.default = deferToConnect;
-} (source$2, source$2.exports));
+} (source$1, source$1.exports));
 
-var deferToConnect = /*@__PURE__*/getDefaultExportFromCjs(source$2.exports);
+var deferToConnect = /*@__PURE__*/getDefaultExportFromCjs(source$1.exports);
 
 const timer = (request) => {
     if (request.timings) {
@@ -88453,7 +88467,7 @@ const timer = (request) => {
     };
     request.timings = timings;
     const handleError = (origin) => {
-        origin.once(require$$0$1.errorMonitor, () => {
+        origin.once(require$$4$1.errorMonitor, () => {
             timings.error = Date.now();
             timings.phases.total = timings.error - timings.start;
         });
@@ -88532,8 +88546,21 @@ const timer = (request) => {
 const DATA_URL_DEFAULT_MIME_TYPE = 'text/plain';
 const DATA_URL_DEFAULT_CHARSET = 'us-ascii';
 
-const testParameter = (name, filters) => {
-	return filters.some(filter => filter instanceof RegExp ? filter.test(name) : filter === name);
+const testParameter = (name, filters) => filters.some(filter => filter instanceof RegExp ? filter.test(name) : filter === name);
+
+const supportedProtocols = new Set([
+	'https:',
+	'http:',
+	'file:',
+]);
+
+const hasCustomProtocol = urlString => {
+	try {
+		const {protocol} = new URL(urlString);
+		return protocol.endsWith(':') && !supportedProtocols.has(protocol);
+	} catch {
+		return false;
+	}
 };
 
 const normalizeDataURL = (urlString, {stripHash}) => {
@@ -88554,7 +88581,7 @@ const normalizeDataURL = (urlString, {stripHash}) => {
 	}
 
 	// Lowercase MIME type
-	const mimeType = (mediaType.shift() || '').toLowerCase();
+	const mimeType = mediaType.shift()?.toLowerCase() ?? '';
 	const attributes = mediaType
 		.map(attribute => {
 			let [key, value = ''] = attribute.split('=').map(string => string.trim());
@@ -88573,23 +88600,23 @@ const normalizeDataURL = (urlString, {stripHash}) => {
 		.filter(Boolean);
 
 	const normalizedMediaType = [
-		...attributes
+		...attributes,
 	];
 
 	if (isBase64) {
 		normalizedMediaType.push('base64');
 	}
 
-	if (normalizedMediaType.length !== 0 || (mimeType && mimeType !== DATA_URL_DEFAULT_MIME_TYPE)) {
+	if (normalizedMediaType.length > 0 || (mimeType && mimeType !== DATA_URL_DEFAULT_MIME_TYPE)) {
 		normalizedMediaType.unshift(mimeType);
 	}
 
 	return `data:${normalizedMediaType.join(';')},${isBase64 ? data.trim() : data}${hash ? `#${hash}` : ''}`;
 };
 
-const normalizeUrl$1 = (urlString, options) => {
+function normalizeUrl(urlString, options) {
 	options = {
-		defaultProtocol: 'http:',
+		defaultProtocol: 'http',
 		normalizeProtocol: true,
 		forceHttp: false,
 		forceHttps: false,
@@ -88601,9 +88628,15 @@ const normalizeUrl$1 = (urlString, options) => {
 		removeTrailingSlash: true,
 		removeSingleSlash: true,
 		removeDirectoryIndex: false,
+		removeExplicitPort: false,
 		sortQueryParameters: true,
-		...options
+		...options,
 	};
+
+	// Legacy: Append `:` to the protocol if missing.
+	if (typeof options.defaultProtocol === 'string' && !options.defaultProtocol.endsWith(':')) {
+		options.defaultProtocol = `${options.defaultProtocol}:`;
+	}
 
 	urlString = urlString.trim();
 
@@ -88612,8 +88645,8 @@ const normalizeUrl$1 = (urlString, options) => {
 		return normalizeDataURL(urlString, options);
 	}
 
-	if (/^view-source:/i.test(urlString)) {
-		throw new Error('`view-source:` is not supported as it is a non-standard protocol');
+	if (hasCustomProtocol(urlString)) {
+		return urlString;
 	}
 
 	const hasRelativeProtocol = urlString.startsWith('//');
@@ -88624,43 +88657,73 @@ const normalizeUrl$1 = (urlString, options) => {
 		urlString = urlString.replace(/^(?!(?:\w+:)?\/\/)|^\/\//, options.defaultProtocol);
 	}
 
-	const urlObj = new URL(urlString);
+	const urlObject = new URL(urlString);
 
 	if (options.forceHttp && options.forceHttps) {
 		throw new Error('The `forceHttp` and `forceHttps` options cannot be used together');
 	}
 
-	if (options.forceHttp && urlObj.protocol === 'https:') {
-		urlObj.protocol = 'http:';
+	if (options.forceHttp && urlObject.protocol === 'https:') {
+		urlObject.protocol = 'http:';
 	}
 
-	if (options.forceHttps && urlObj.protocol === 'http:') {
-		urlObj.protocol = 'https:';
+	if (options.forceHttps && urlObject.protocol === 'http:') {
+		urlObject.protocol = 'https:';
 	}
 
 	// Remove auth
 	if (options.stripAuthentication) {
-		urlObj.username = '';
-		urlObj.password = '';
+		urlObject.username = '';
+		urlObject.password = '';
 	}
 
 	// Remove hash
 	if (options.stripHash) {
-		urlObj.hash = '';
+		urlObject.hash = '';
 	} else if (options.stripTextFragment) {
-		urlObj.hash = urlObj.hash.replace(/#?:~:text.*?$/i, '');
+		urlObject.hash = urlObject.hash.replace(/#?:~:text.*?$/i, '');
 	}
 
 	// Remove duplicate slashes if not preceded by a protocol
-	if (urlObj.pathname) {
-		urlObj.pathname = urlObj.pathname.replace(/(?<!\b(?:[a-z][a-z\d+\-.]{1,50}:))\/{2,}/g, '/');
+	// NOTE: This could be implemented using a single negative lookbehind
+	// regex, but we avoid that to maintain compatibility with older js engines
+	// which do not have support for that feature.
+	if (urlObject.pathname) {
+		// TODO: Replace everything below with `urlObject.pathname = urlObject.pathname.replace(/(?<!\b[a-z][a-z\d+\-.]{1,50}:)\/{2,}/g, '/');` when Safari supports negative lookbehind.
+
+		// Split the string by occurrences of this protocol regex, and perform
+		// duplicate-slash replacement on the strings between those occurrences
+		// (if any).
+		const protocolRegex = /\b[a-z][a-z\d+\-.]{1,50}:\/\//g;
+
+		let lastIndex = 0;
+		let result = '';
+		for (;;) {
+			const match = protocolRegex.exec(urlObject.pathname);
+			if (!match) {
+				break;
+			}
+
+			const protocol = match[0];
+			const protocolAtIndex = match.index;
+			const intermediate = urlObject.pathname.slice(lastIndex, protocolAtIndex);
+
+			result += intermediate.replace(/\/{2,}/g, '/');
+			result += protocol;
+			lastIndex = protocolAtIndex + protocol.length;
+		}
+
+		const remnant = urlObject.pathname.slice(lastIndex, urlObject.pathname.length);
+		result += remnant.replace(/\/{2,}/g, '/');
+
+		urlObject.pathname = result;
 	}
 
 	// Decode URI octets
-	if (urlObj.pathname) {
+	if (urlObject.pathname) {
 		try {
-			urlObj.pathname = decodeURI(urlObj.pathname);
-		} catch (_) {}
+			urlObject.pathname = decodeURI(urlObject.pathname);
+		} catch {}
 	}
 
 	// Remove directory index
@@ -88669,62 +88732,83 @@ const normalizeUrl$1 = (urlString, options) => {
 	}
 
 	if (Array.isArray(options.removeDirectoryIndex) && options.removeDirectoryIndex.length > 0) {
-		let pathComponents = urlObj.pathname.split('/');
+		let pathComponents = urlObject.pathname.split('/');
 		const lastComponent = pathComponents[pathComponents.length - 1];
 
 		if (testParameter(lastComponent, options.removeDirectoryIndex)) {
-			pathComponents = pathComponents.slice(0, pathComponents.length - 1);
-			urlObj.pathname = pathComponents.slice(1).join('/') + '/';
+			pathComponents = pathComponents.slice(0, -1);
+			urlObject.pathname = pathComponents.slice(1).join('/') + '/';
 		}
 	}
 
-	if (urlObj.hostname) {
+	if (urlObject.hostname) {
 		// Remove trailing dot
-		urlObj.hostname = urlObj.hostname.replace(/\.$/, '');
+		urlObject.hostname = urlObject.hostname.replace(/\.$/, '');
 
 		// Remove `www.`
-		if (options.stripWWW && /^www\.(?!www\.)(?:[a-z\-\d]{1,63})\.(?:[a-z.\-\d]{2,63})$/.test(urlObj.hostname)) {
+		if (options.stripWWW && /^www\.(?!www\.)[a-z\-\d]{1,63}\.[a-z.\-\d]{2,63}$/.test(urlObject.hostname)) {
 			// Each label should be max 63 at length (min: 1).
 			// Source: https://en.wikipedia.org/wiki/Hostname#Restrictions_on_valid_host_names
 			// Each TLD should be up to 63 characters long (min: 2).
 			// It is technically possible to have a single character TLD, but none currently exist.
-			urlObj.hostname = urlObj.hostname.replace(/^www\./, '');
+			urlObject.hostname = urlObject.hostname.replace(/^www\./, '');
 		}
 	}
 
 	// Remove query unwanted parameters
 	if (Array.isArray(options.removeQueryParameters)) {
-		for (const key of [...urlObj.searchParams.keys()]) {
+		// eslint-disable-next-line unicorn/no-useless-spread -- We are intentionally spreading to get a copy.
+		for (const key of [...urlObject.searchParams.keys()]) {
 			if (testParameter(key, options.removeQueryParameters)) {
-				urlObj.searchParams.delete(key);
+				urlObject.searchParams.delete(key);
 			}
 		}
 	}
 
-	if (options.removeQueryParameters === true) {
-		urlObj.search = '';
+	if (!Array.isArray(options.keepQueryParameters) && options.removeQueryParameters === true) {
+		urlObject.search = '';
+	}
+
+	// Keep wanted query parameters
+	if (Array.isArray(options.keepQueryParameters) && options.keepQueryParameters.length > 0) {
+		// eslint-disable-next-line unicorn/no-useless-spread -- We are intentionally spreading to get a copy.
+		for (const key of [...urlObject.searchParams.keys()]) {
+			if (!testParameter(key, options.keepQueryParameters)) {
+				urlObject.searchParams.delete(key);
+			}
+		}
 	}
 
 	// Sort query parameters
 	if (options.sortQueryParameters) {
-		urlObj.searchParams.sort();
+		urlObject.searchParams.sort();
+
+		// Calling `.sort()` encodes the search parameters, so we need to decode them again.
+		try {
+			urlObject.search = decodeURIComponent(urlObject.search);
+		} catch {}
 	}
 
 	if (options.removeTrailingSlash) {
-		urlObj.pathname = urlObj.pathname.replace(/\/$/, '');
+		urlObject.pathname = urlObject.pathname.replace(/\/$/, '');
+	}
+
+	// Remove an explicit port number, excluding a default port number, if applicable
+	if (options.removeExplicitPort && urlObject.port) {
+		urlObject.port = '';
 	}
 
 	const oldUrlString = urlString;
 
 	// Take advantage of many of the Node `url` normalizations
-	urlString = urlObj.toString();
+	urlString = urlObject.toString();
 
-	if (!options.removeSingleSlash && urlObj.pathname === '/' && !oldUrlString.endsWith('/') && urlObj.hash === '') {
+	if (!options.removeSingleSlash && urlObject.pathname === '/' && !oldUrlString.endsWith('/') && urlObject.hash === '') {
 		urlString = urlString.replace(/\/$/, '');
 	}
 
 	// Remove ending `/` unless removeSingleSlash is false
-	if ((options.removeTrailingSlash || urlObj.pathname === '/') && urlObj.hash === '' && options.removeSingleSlash) {
+	if ((options.removeTrailingSlash || urlObject.pathname === '/') && urlObject.hash === '' && options.removeSingleSlash) {
 		urlString = urlString.replace(/\/$/, '');
 	}
 
@@ -88739,193 +88823,13 @@ const normalizeUrl$1 = (urlString, options) => {
 	}
 
 	return urlString;
-};
+}
 
-var normalizeUrl_1 = normalizeUrl$1;
+var getStream$2 = {exports: {}};
 
-var getStream$5 = {exports: {}};
+const {PassThrough: PassThroughStream} = Stream__default["default"];
 
-var once$1 = once$3.exports;
-
-var noop$3 = function() {};
-
-var isRequest$1 = function(stream) {
-	return stream.setHeader && typeof stream.abort === 'function';
-};
-
-var isChildProcess = function(stream) {
-	return stream.stdio && Array.isArray(stream.stdio) && stream.stdio.length === 3
-};
-
-var eos$1 = function(stream, opts, callback) {
-	if (typeof opts === 'function') return eos$1(stream, null, opts);
-	if (!opts) opts = {};
-
-	callback = once$1(callback || noop$3);
-
-	var ws = stream._writableState;
-	var rs = stream._readableState;
-	var readable = opts.readable || (opts.readable !== false && stream.readable);
-	var writable = opts.writable || (opts.writable !== false && stream.writable);
-	var cancelled = false;
-
-	var onlegacyfinish = function() {
-		if (!stream.writable) onfinish();
-	};
-
-	var onfinish = function() {
-		writable = false;
-		if (!readable) callback.call(stream);
-	};
-
-	var onend = function() {
-		readable = false;
-		if (!writable) callback.call(stream);
-	};
-
-	var onexit = function(exitCode) {
-		callback.call(stream, exitCode ? new Error('exited with error code: ' + exitCode) : null);
-	};
-
-	var onerror = function(err) {
-		callback.call(stream, err);
-	};
-
-	var onclose = function() {
-		process.nextTick(onclosenexttick);
-	};
-
-	var onclosenexttick = function() {
-		if (cancelled) return;
-		if (readable && !(rs && (rs.ended && !rs.destroyed))) return callback.call(stream, new Error('premature close'));
-		if (writable && !(ws && (ws.ended && !ws.destroyed))) return callback.call(stream, new Error('premature close'));
-	};
-
-	var onrequest = function() {
-		stream.req.on('finish', onfinish);
-	};
-
-	if (isRequest$1(stream)) {
-		stream.on('complete', onfinish);
-		stream.on('abort', onclose);
-		if (stream.req) onrequest();
-		else stream.on('request', onrequest);
-	} else if (writable && !ws) { // legacy streams
-		stream.on('end', onlegacyfinish);
-		stream.on('close', onlegacyfinish);
-	}
-
-	if (isChildProcess(stream)) stream.on('exit', onexit);
-
-	stream.on('end', onend);
-	stream.on('finish', onfinish);
-	if (opts.error !== false) stream.on('error', onerror);
-	stream.on('close', onclose);
-
-	return function() {
-		cancelled = true;
-		stream.removeListener('complete', onfinish);
-		stream.removeListener('abort', onclose);
-		stream.removeListener('request', onrequest);
-		if (stream.req) stream.req.removeListener('finish', onfinish);
-		stream.removeListener('end', onlegacyfinish);
-		stream.removeListener('close', onlegacyfinish);
-		stream.removeListener('finish', onfinish);
-		stream.removeListener('exit', onexit);
-		stream.removeListener('end', onend);
-		stream.removeListener('error', onerror);
-		stream.removeListener('close', onclose);
-	};
-};
-
-var endOfStream = eos$1;
-
-var once = once$3.exports;
-var eos = endOfStream;
-var fs = require$$0__default["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
-
-var noop$2 = function () {};
-var ancient = /^v?\.0/.test(process.version);
-
-var isFn = function (fn) {
-  return typeof fn === 'function'
-};
-
-var isFS = function (stream) {
-  if (!ancient) return false // newer node version do not need to care about fs is a special way
-  if (!fs) return false // browser
-  return (stream instanceof (fs.ReadStream || noop$2) || stream instanceof (fs.WriteStream || noop$2)) && isFn(stream.close)
-};
-
-var isRequest = function (stream) {
-  return stream.setHeader && isFn(stream.abort)
-};
-
-var destroyer = function (stream, reading, writing, callback) {
-  callback = once(callback);
-
-  var closed = false;
-  stream.on('close', function () {
-    closed = true;
-  });
-
-  eos(stream, {readable: reading, writable: writing}, function (err) {
-    if (err) return callback(err)
-    closed = true;
-    callback();
-  });
-
-  var destroyed = false;
-  return function (err) {
-    if (closed) return
-    if (destroyed) return
-    destroyed = true;
-
-    if (isFS(stream)) return stream.close(noop$2) // use close for fs streams to avoid fd leaks
-    if (isRequest(stream)) return stream.abort() // request.destroy just do .end - .abort is what we want
-
-    if (isFn(stream.destroy)) return stream.destroy()
-
-    callback(err || new Error('stream was destroyed'));
-  }
-};
-
-var call = function (fn) {
-  fn();
-};
-
-var pipe = function (from, to) {
-  return from.pipe(to)
-};
-
-var pump$1 = function () {
-  var streams = Array.prototype.slice.call(arguments);
-  var callback = isFn(streams[streams.length - 1] || noop$2) && streams.pop() || noop$2;
-
-  if (Array.isArray(streams[0])) streams = streams[0];
-  if (streams.length < 2) throw new Error('pump requires two streams per minimum')
-
-  var error;
-  var destroys = streams.map(function (stream, i) {
-    var reading = i < streams.length - 1;
-    var writing = i > 0;
-    return destroyer(stream, reading, writing, function (err) {
-      if (!error) error = err;
-      if (err) destroys.forEach(call);
-      if (reading) return
-      destroys.forEach(call);
-      callback(error);
-    })
-  });
-
-  return streams.reduce(pipe)
-};
-
-var pump_1 = pump$1;
-
-const {PassThrough: PassThroughStream$1} = Stream__default["default"];
-
-var bufferStream$3 = options => {
+var bufferStream$1 = options => {
 	options = {...options};
 
 	const {array} = options;
@@ -88943,7 +88847,7 @@ var bufferStream$3 = options => {
 		encoding = null;
 	}
 
-	const stream = new PassThroughStream$1({objectMode});
+	const stream = new PassThroughStream({objectMode});
 
 	if (encoding) {
 		stream.setEncoding(encoding);
@@ -88975,20 +88879,23 @@ var bufferStream$3 = options => {
 	return stream;
 };
 
-const {constants: BufferConstants$1} = require$$0__default$4["default"];
-const pump = pump_1;
-const bufferStream$2 = bufferStream$3;
+const {constants: BufferConstants} = require$$0__default$3["default"];
+const stream$1 = Stream__default["default"];
+const {promisify} = require$$6__default["default"];
+const bufferStream = bufferStream$1;
 
-class MaxBufferError$1 extends Error {
+const streamPipelinePromisified = promisify(stream$1.pipeline);
+
+class MaxBufferError extends Error {
 	constructor() {
 		super('maxBuffer exceeded');
 		this.name = 'MaxBufferError';
 	}
 }
 
-async function getStream$4(inputStream, options) {
+async function getStream$1(inputStream, options) {
 	if (!inputStream) {
-		return Promise.reject(new Error('Expected a stream'));
+		throw new Error('Expected a stream');
 	}
 
 	options = {
@@ -88997,30 +88904,30 @@ async function getStream$4(inputStream, options) {
 	};
 
 	const {maxBuffer} = options;
+	const stream = bufferStream(options);
 
-	let stream;
 	await new Promise((resolve, reject) => {
 		const rejectPromise = error => {
 			// Don't retrieve an oversized buffer.
-			if (error && stream.getBufferedLength() <= BufferConstants$1.MAX_LENGTH) {
+			if (error && stream.getBufferedLength() <= BufferConstants.MAX_LENGTH) {
 				error.bufferedData = stream.getBufferedValue();
 			}
 
 			reject(error);
 		};
 
-		stream = pump(inputStream, bufferStream$2(options), error => {
-			if (error) {
+		(async () => {
+			try {
+				await streamPipelinePromisified(inputStream, stream);
+				resolve();
+			} catch (error) {
 				rejectPromise(error);
-				return;
 			}
-
-			resolve();
-		});
+		})();
 
 		stream.on('data', () => {
 			if (stream.getBufferedLength() > maxBuffer) {
-				rejectPromise(new MaxBufferError$1());
+				rejectPromise(new MaxBufferError());
 			}
 		});
 	});
@@ -89028,12 +88935,10 @@ async function getStream$4(inputStream, options) {
 	return stream.getBufferedValue();
 }
 
-getStream$5.exports = getStream$4;
-// TODO: Remove this for the next major release
-getStream$5.exports.default = getStream$4;
-getStream$5.exports.buffer = (stream, options) => getStream$4(stream, {...options, encoding: 'buffer'});
-getStream$5.exports.array = (stream, options) => getStream$4(stream, {...options, array: true});
-getStream$5.exports.MaxBufferError = MaxBufferError$1;
+getStream$2.exports = getStream$1;
+var buffer = getStream$2.exports.buffer = (stream, options) => getStream$1(stream, {...options, encoding: 'buffer'});
+getStream$2.exports.array = (stream, options) => getStream$1(stream, {...options, array: true});
+getStream$2.exports.MaxBufferError = MaxBufferError;
 
 // rfc7231 6.1
 const statusCodeCacheableByDefault = new Set([
@@ -89708,105 +89613,46 @@ var httpCacheSemantics = class CachePolicy {
     }
 };
 
-var lowercaseKeys$4 = object => {
-	const result = {};
+function lowercaseKeys(object) {
+	return Object.fromEntries(Object.entries(object).map(([key, value]) => [key.toLowerCase(), value]));
+}
 
-	for (const [key, value] of Object.entries(object)) {
-		result[key.toLowerCase()] = value;
-	}
+class Response extends stream$2.Readable {
+	statusCode;
+	headers;
+	body;
+	url;
 
-	return result;
-};
-
-const Readable$1 = Stream__default["default"].Readable;
-const lowercaseKeys$3 = lowercaseKeys$4;
-
-class Response$1 extends Readable$1 {
-	constructor(statusCode, headers, body, url) {
+	constructor({statusCode, headers, body, url}) {
 		if (typeof statusCode !== 'number') {
 			throw new TypeError('Argument `statusCode` should be a number');
 		}
+
 		if (typeof headers !== 'object') {
 			throw new TypeError('Argument `headers` should be an object');
 		}
-		if (!(body instanceof Buffer)) {
+
+		if (!(body instanceof Uint8Array)) {
 			throw new TypeError('Argument `body` should be a buffer');
 		}
+
 		if (typeof url !== 'string') {
 			throw new TypeError('Argument `url` should be a string');
 		}
 
-		super();
+		super({
+			read() {
+				this.push(body);
+				this.push(null);
+			},
+		});
+
 		this.statusCode = statusCode;
-		this.headers = lowercaseKeys$3(headers);
+		this.headers = lowercaseKeys(headers);
 		this.body = body;
 		this.url = url;
 	}
-
-	_read() {
-		this.push(this.body);
-		this.push(null);
-	}
 }
-
-var src$4 = Response$1;
-
-var lowercaseKeys$2 = object => {
-	const result = {};
-
-	for (const [key, value] of Object.entries(object)) {
-		result[key.toLowerCase()] = value;
-	}
-
-	return result;
-};
-
-// We define these manually to ensure they're always copied
-// even if they would move up the prototype chain
-// https://nodejs.org/api/http.html#http_class_http_incomingmessage
-const knownProps = [
-	'destroy',
-	'setTimeout',
-	'socket',
-	'headers',
-	'trailers',
-	'rawHeaders',
-	'statusCode',
-	'httpVersion',
-	'httpVersionMinor',
-	'httpVersionMajor',
-	'rawTrailers',
-	'statusMessage'
-];
-
-var mimicResponse$3 = (fromStream, toStream) => {
-	const fromProps = new Set(Object.keys(fromStream).concat(knownProps));
-
-	for (const prop of fromProps) {
-		// Don't overwrite existing properties
-		if (prop in toStream) {
-			continue;
-		}
-
-		toStream[prop] = typeof fromStream[prop] === 'function' ? fromStream[prop].bind(fromStream) : fromStream[prop];
-	}
-};
-
-const PassThrough$1 = Stream__default["default"].PassThrough;
-const mimicResponse$2 = mimicResponse$3;
-
-const cloneResponse$1 = response => {
-	if (!(response && response.pipe)) {
-		throw new TypeError('Parameter `response` must be a response stream.');
-	}
-
-	const clone = new PassThrough$1();
-	mimicResponse$2(response, clone);
-
-	return response.pipe(clone);
-};
-
-var src$3 = cloneResponse$1;
 
 function commonjsRequire(path) {
 	throw new Error('Could not dynamically require "' + path + '". Please configure the dynamicRequireTargets or/and ignoreDynamicRequires option of @rollup/plugin-commonjs appropriately for this require call to work.');
@@ -89873,72 +89719,8 @@ jsonBuffer.parse = function (s) {
   })
 };
 
-var src$2 = {exports: {}};
-
-var mergeOptions$1 = (defaultOptions = {}, options = {}) => {
-  const params = {
-    ...(defaultOptions.params || {}),
-    ...(options.params || {})
-  };
-
-  return {
-    ...defaultOptions,
-    ...options,
-    ...(Object.keys(params).length
-      ? {
-          params
-        }
-      : {})
-  }
-};
-
-const { promisify: promisify$2 } = require$$6__default["default"];
-const JSONB$1 = jsonBuffer;
-const zlib$1 = zlib__default["default"];
-
-const mergeOptions = mergeOptions$1;
-
-const compress = promisify$2(zlib$1.brotliCompress);
-
-const decompress = promisify$2(zlib$1.brotliDecompress);
-
-const identity = val => val;
-
-const createCompress = ({
-  enable = true,
-  serialize = JSONB$1.stringify,
-  deserialize = JSONB$1.parse,
-  compressOptions,
-  decompressOptions
-} = {}) => {
-  if (!enable) {
-    return { serialize, deserialize, decompress: identity, compress: identity }
-  }
-
-  return {
-    serialize,
-    deserialize,
-    compress: async (data, options = {}) => {
-      if (data === undefined) return data
-      const serializedData = serialize(data);
-      return compress(serializedData, mergeOptions(compressOptions, options))
-    },
-    decompress: async (data, options = {}) => {
-      if (data === undefined) return data
-      return deserialize(
-        await decompress(data, mergeOptions(decompressOptions, options))
-      )
-    }
-  }
-};
-
-src$2.exports = createCompress;
-src$2.exports.stringify = JSONB$1.stringify;
-src$2.exports.parse = JSONB$1.parse;
-
-const EventEmitter$2 = require$$0__default$1["default"];
+const EventEmitter$1 = require$$4__default["default"];
 const JSONB = jsonBuffer;
-const compressBrotli = src$2.exports;
 
 const loadStore = options => {
 	const adapters = {
@@ -89971,7 +89753,7 @@ const iterableAdapters = [
 	'tiered',
 ];
 
-class Keyv$1 extends EventEmitter$2 {
+class Keyv extends EventEmitter$1 {
 	constructor(uri, {emitErrors = true, ...options} = {}) {
 		super();
 		this.opts = {
@@ -89987,13 +89769,10 @@ class Keyv$1 extends EventEmitter$2 {
 			this.opts.store = loadStore(adapterOptions);
 		}
 
-		if (this.opts.compress) {
-			const brotli = compressBrotli(this.opts.compress.opts);
-			this.opts.serialize = async ({value, expires}) => brotli.serialize({value: await brotli.compress(value), expires});
-			this.opts.deserialize = async data => {
-				const {value, expires} = brotli.deserialize(data);
-				return {value: await brotli.decompress(value), expires};
-			};
+		if (this.opts.compression) {
+			const compression = this.opts.compression;
+			this.opts.serialize = compression.serialize.bind(compression);
+			this.opts.deserialize = compression.deserialize.bind(compression);
 		}
 
 		if (typeof this.opts.store.on === 'function' && emitErrors) {
@@ -90058,7 +89837,7 @@ class Keyv$1 extends EventEmitter$2 {
 			for (const key of keyPrefixed) {
 				promises.push(Promise.resolve()
 					.then(() => store.get(key))
-					.then(data => (typeof data === 'string') ? this.opts.deserialize(data) : data)
+					.then(data => (typeof data === 'string') ? this.opts.deserialize(data) : (this.opts.compression ? this.opts.deserialize(data) : data))
 					.then(data => {
 						if (data === undefined || data === null) {
 							return undefined;
@@ -90080,13 +89859,13 @@ class Keyv$1 extends EventEmitter$2 {
 						data.push(value.value);
 					}
 
-					return data.every(x => x === undefined) ? [] : data;
+					return data;
 				});
 		}
 
 		return Promise.resolve()
 			.then(() => isArray ? store.getMany(keyPrefixed) : store.get(keyPrefixed))
-			.then(data => (typeof data === 'string') ? this.opts.deserialize(data) : data)
+			.then(data => (typeof data === 'string') ? this.opts.deserialize(data) : (this.opts.compression ? this.opts.deserialize(data) : data))
 			.then(data => {
 				if (data === undefined || data === null) {
 					return undefined;
@@ -90094,10 +89873,6 @@ class Keyv$1 extends EventEmitter$2 {
 
 				if (isArray) {
 					const result = [];
-
-					if (data.length === 0) {
-						return [];
-					}
 
 					for (let row of data) {
 						if ((typeof row === 'string')) {
@@ -90117,7 +89892,7 @@ class Keyv$1 extends EventEmitter$2 {
 						}
 					}
 
-					return result.every(x => x === undefined) ? [] : result;
+					return result;
 				}
 
 				if (typeof data.expires === 'number' && Date.now() > data.expires) {
@@ -90205,257 +89980,362 @@ class Keyv$1 extends EventEmitter$2 {
 	}
 }
 
-var src$1 = Keyv$1;
+var src = Keyv;
 
-const EventEmitter$1 = require$$0__default$1["default"];
-const urlLib = Url__default["default"];
-const normalizeUrl = normalizeUrl_1;
-const getStream$3 = getStream$5.exports;
-const CachePolicy = httpCacheSemantics;
-const Response = src$4;
-const lowercaseKeys$1 = lowercaseKeys$2;
-const cloneResponse = src$3;
-const Keyv = src$1;
+// We define these manually to ensure they're always copied
+// even if they would move up the prototype chain
+// https://nodejs.org/api/http.html#http_class_http_incomingmessage
+const knownProperties$1 = [
+	'aborted',
+	'complete',
+	'headers',
+	'httpVersion',
+	'httpVersionMinor',
+	'httpVersionMajor',
+	'method',
+	'rawHeaders',
+	'rawTrailers',
+	'setTimeout',
+	'socket',
+	'statusCode',
+	'statusMessage',
+	'trailers',
+	'url',
+];
 
-class CacheableRequest {
-	constructor(request, cacheAdapter) {
-		if (typeof request !== 'function') {
-			throw new TypeError('Parameter `request` must be a function');
+function mimicResponse$2(fromStream, toStream) {
+	if (toStream._readableState.autoDestroy) {
+		throw new Error('The second stream must have the `autoDestroy` option set to `false`');
+	}
+
+	const fromProperties = new Set([...Object.keys(fromStream), ...knownProperties$1]);
+
+	const properties = {};
+
+	for (const property of fromProperties) {
+		// Don't overwrite existing properties.
+		if (property in toStream) {
+			continue;
 		}
 
-		this.cache = new Keyv({
-			uri: typeof cacheAdapter === 'string' && cacheAdapter,
-			store: typeof cacheAdapter !== 'string' && cacheAdapter,
-			namespace: 'cacheable-request'
-		});
+		properties[property] = {
+			get() {
+				const value = fromStream[property];
+				const isFunction = typeof value === 'function';
 
-		return this.createCacheableRequest(request);
-	}
-
-	createCacheableRequest(request) {
-		return (opts, cb) => {
-			let url;
-			if (typeof opts === 'string') {
-				url = normalizeUrlObject(urlLib.parse(opts));
-				opts = {};
-			} else if (opts instanceof urlLib.URL) {
-				url = normalizeUrlObject(urlLib.parse(opts.toString()));
-				opts = {};
-			} else {
-				const [pathname, ...searchParts] = (opts.path || '').split('?');
-				const search = searchParts.length > 0 ?
-					`?${searchParts.join('?')}` :
-					'';
-				url = normalizeUrlObject({ ...opts, pathname, search });
-			}
-
-			opts = {
-				headers: {},
-				method: 'GET',
-				cache: true,
-				strictTtl: false,
-				automaticFailover: false,
-				...opts,
-				...urlObjectToRequestOptions(url)
-			};
-			opts.headers = lowercaseKeys$1(opts.headers);
-
-			const ee = new EventEmitter$1();
-			const normalizedUrlString = normalizeUrl(
-				urlLib.format(url),
-				{
-					stripWWW: false,
-					removeTrailingSlash: false,
-					stripAuthentication: false
-				}
-			);
-			const key = `${opts.method}:${normalizedUrlString}`;
-			let revalidate = false;
-			let madeRequest = false;
-
-			const makeRequest = opts => {
-				madeRequest = true;
-				let requestErrored = false;
-				let requestErrorCallback;
-
-				const requestErrorPromise = new Promise(resolve => {
-					requestErrorCallback = () => {
-						if (!requestErrored) {
-							requestErrored = true;
-							resolve();
-						}
-					};
-				});
-
-				const handler = response => {
-					if (revalidate && !opts.forceRefresh) {
-						response.status = response.statusCode;
-						const revalidatedPolicy = CachePolicy.fromObject(revalidate.cachePolicy).revalidatedPolicy(opts, response);
-						if (!revalidatedPolicy.modified) {
-							const headers = revalidatedPolicy.policy.responseHeaders();
-							response = new Response(revalidate.statusCode, headers, revalidate.body, revalidate.url);
-							response.cachePolicy = revalidatedPolicy.policy;
-							response.fromCache = true;
-						}
-					}
-
-					if (!response.fromCache) {
-						response.cachePolicy = new CachePolicy(opts, response, opts);
-						response.fromCache = false;
-					}
-
-					let clonedResponse;
-					if (opts.cache && response.cachePolicy.storable()) {
-						clonedResponse = cloneResponse(response);
-
-						(async () => {
-							try {
-								const bodyPromise = getStream$3.buffer(response);
-
-								await Promise.race([
-									requestErrorPromise,
-									new Promise(resolve => response.once('end', resolve))
-								]);
-
-								if (requestErrored) {
-									return;
-								}
-
-								const body = await bodyPromise;
-
-								const value = {
-									cachePolicy: response.cachePolicy.toObject(),
-									url: response.url,
-									statusCode: response.fromCache ? revalidate.statusCode : response.statusCode,
-									body
-								};
-
-								let ttl = opts.strictTtl ? response.cachePolicy.timeToLive() : undefined;
-								if (opts.maxTtl) {
-									ttl = ttl ? Math.min(ttl, opts.maxTtl) : opts.maxTtl;
-								}
-
-								await this.cache.set(key, value, ttl);
-							} catch (error) {
-								ee.emit('error', new CacheableRequest.CacheError(error));
-							}
-						})();
-					} else if (opts.cache && revalidate) {
-						(async () => {
-							try {
-								await this.cache.delete(key);
-							} catch (error) {
-								ee.emit('error', new CacheableRequest.CacheError(error));
-							}
-						})();
-					}
-
-					ee.emit('response', clonedResponse || response);
-					if (typeof cb === 'function') {
-						cb(clonedResponse || response);
-					}
-				};
-
-				try {
-					const req = request(opts, handler);
-					req.once('error', requestErrorCallback);
-					req.once('abort', requestErrorCallback);
-					ee.emit('request', req);
-				} catch (error) {
-					ee.emit('error', new CacheableRequest.RequestError(error));
-				}
-			};
-
-			(async () => {
-				const get = async opts => {
-					await Promise.resolve();
-
-					const cacheEntry = opts.cache ? await this.cache.get(key) : undefined;
-					if (typeof cacheEntry === 'undefined') {
-						return makeRequest(opts);
-					}
-
-					const policy = CachePolicy.fromObject(cacheEntry.cachePolicy);
-					if (policy.satisfiesWithoutRevalidation(opts) && !opts.forceRefresh) {
-						const headers = policy.responseHeaders();
-						const response = new Response(cacheEntry.statusCode, headers, cacheEntry.body, cacheEntry.url);
-						response.cachePolicy = policy;
-						response.fromCache = true;
-
-						ee.emit('response', response);
-						if (typeof cb === 'function') {
-							cb(response);
-						}
-					} else {
-						revalidate = cacheEntry;
-						opts.headers = policy.revalidationHeaders(opts);
-						makeRequest(opts);
-					}
-				};
-
-				const errorHandler = error => ee.emit('error', new CacheableRequest.CacheError(error));
-				this.cache.once('error', errorHandler);
-				ee.on('response', () => this.cache.removeListener('error', errorHandler));
-
-				try {
-					await get(opts);
-				} catch (error) {
-					if (opts.automaticFailover && !madeRequest) {
-						makeRequest(opts);
-					}
-
-					ee.emit('error', new CacheableRequest.CacheError(error));
-				}
-			})();
-
-			return ee;
+				return isFunction ? value.bind(fromStream) : value;
+			},
+			set(value) {
+				fromStream[property] = value;
+			},
+			enumerable: true,
+			configurable: false,
 		};
 	}
+
+	Object.defineProperties(toStream, properties);
+
+	fromStream.once('aborted', () => {
+		toStream.destroy();
+
+		toStream.emit('aborted');
+	});
+
+	fromStream.once('close', () => {
+		if (fromStream.complete) {
+			if (toStream.readable) {
+				toStream.once('end', () => {
+					toStream.emit('close');
+				});
+			} else {
+				toStream.emit('close');
+			}
+		} else {
+			toStream.emit('close');
+		}
+	});
+
+	return toStream;
 }
 
-function urlObjectToRequestOptions(url) {
-	const options = { ...url };
-	options.path = `${url.pathname || '/'}${url.search || ''}`;
-	delete options.pathname;
-	delete options.search;
-	return options;
+// Type definitions for cacheable-request 6.0
+// Project: https://github.com/lukechilds/cacheable-request#readme
+// Definitions by: BendingBender <https://github.com/BendingBender>
+//                 Paul Melnikow <https://github.com/paulmelnikow>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
+class RequestError extends Error {
+    constructor(error) {
+        super(error.message);
+        Object.assign(this, error);
+    }
+}
+class CacheError extends Error {
+    constructor(error) {
+        super(error.message);
+        Object.assign(this, error);
+    }
 }
 
-function normalizeUrlObject(url) {
-	// If url was parsed by url.parse or new URL:
-	// - hostname will be set
-	// - host will be hostname[:port]
-	// - port will be set if it was explicit in the parsed string
-	// Otherwise, url was from request options:
-	// - hostname or host may be set
-	// - host shall not have port encoded
-	return {
-		protocol: url.protocol,
-		auth: url.auth,
-		hostname: url.hostname || url.host || 'localhost',
-		port: url.port,
-		pathname: url.pathname,
-		search: url.search
-	};
+class CacheableRequest {
+    constructor(cacheRequest, cacheAdapter) {
+        this.hooks = new Map();
+        this.request = () => (options, cb) => {
+            let url;
+            if (typeof options === 'string') {
+                url = normalizeUrlObject(urlLib__default["default"].parse(options));
+                options = {};
+            }
+            else if (options instanceof urlLib__default["default"].URL) {
+                url = normalizeUrlObject(urlLib__default["default"].parse(options.toString()));
+                options = {};
+            }
+            else {
+                const [pathname, ...searchParts] = (options.path ?? '').split('?');
+                const search = searchParts.length > 0
+                    ? `?${searchParts.join('?')}`
+                    : '';
+                url = normalizeUrlObject({ ...options, pathname, search });
+            }
+            options = {
+                headers: {},
+                method: 'GET',
+                cache: true,
+                strictTtl: false,
+                automaticFailover: false,
+                ...options,
+                ...urlObjectToRequestOptions(url),
+            };
+            options.headers = Object.fromEntries(entries(options.headers).map(([key, value]) => [key.toLowerCase(), value]));
+            const ee = new EventEmitter__default["default"]();
+            const normalizedUrlString = normalizeUrl(urlLib__default["default"].format(url), {
+                stripWWW: false,
+                removeTrailingSlash: false,
+                stripAuthentication: false,
+            });
+            let key = `${options.method}:${normalizedUrlString}`;
+            // POST, PATCH, and PUT requests may be cached, depending on the response
+            // cache-control headers. As a result, the body of the request should be
+            // added to the cache key in order to avoid collisions.
+            if (options.body && options.method !== undefined && ['POST', 'PATCH', 'PUT'].includes(options.method)) {
+                if (options.body instanceof stream__default["default"].Readable) {
+                    // Streamed bodies should completely skip the cache because they may
+                    // or may not be hashable and in either case the stream would need to
+                    // close before the cache key could be generated.
+                    options.cache = false;
+                }
+                else {
+                    key += `:${crypto__default["default"].createHash('md5').update(options.body).digest('hex')}`;
+                }
+            }
+            let revalidate = false;
+            let madeRequest = false;
+            const makeRequest = (options_) => {
+                madeRequest = true;
+                let requestErrored = false;
+                let requestErrorCallback = () => { };
+                const requestErrorPromise = new Promise(resolve => {
+                    requestErrorCallback = () => {
+                        if (!requestErrored) {
+                            requestErrored = true;
+                            resolve();
+                        }
+                    };
+                });
+                const handler = async (response) => {
+                    if (revalidate) {
+                        response.status = response.statusCode;
+                        const revalidatedPolicy = httpCacheSemantics.fromObject(revalidate.cachePolicy).revalidatedPolicy(options_, response);
+                        if (!revalidatedPolicy.modified) {
+                            response.resume();
+                            await new Promise(resolve => {
+                                // Skipping 'error' handler cause 'error' event should't be emitted for 304 response
+                                response
+                                    .once('end', resolve);
+                            });
+                            const headers = convertHeaders(revalidatedPolicy.policy.responseHeaders());
+                            response = new Response({ statusCode: revalidate.statusCode, headers, body: revalidate.body, url: revalidate.url });
+                            response.cachePolicy = revalidatedPolicy.policy;
+                            response.fromCache = true;
+                        }
+                    }
+                    if (!response.fromCache) {
+                        response.cachePolicy = new httpCacheSemantics(options_, response, options_);
+                        response.fromCache = false;
+                    }
+                    let clonedResponse;
+                    if (options_.cache && response.cachePolicy.storable()) {
+                        clonedResponse = cloneResponse(response);
+                        (async () => {
+                            try {
+                                const bodyPromise = getStream$2.exports.buffer(response);
+                                await Promise.race([
+                                    requestErrorPromise,
+                                    new Promise(resolve => response.once('end', resolve)),
+                                    new Promise(resolve => response.once('close', resolve)), // eslint-disable-line no-promise-executor-return
+                                ]);
+                                const body = await bodyPromise;
+                                let value = {
+                                    url: response.url,
+                                    statusCode: response.fromCache ? revalidate.statusCode : response.statusCode,
+                                    body,
+                                    cachePolicy: response.cachePolicy.toObject(),
+                                };
+                                let ttl = options_.strictTtl ? response.cachePolicy.timeToLive() : undefined;
+                                if (options_.maxTtl) {
+                                    ttl = ttl ? Math.min(ttl, options_.maxTtl) : options_.maxTtl;
+                                }
+                                if (this.hooks.size > 0) {
+                                    /* eslint-disable no-await-in-loop */
+                                    for (const key_ of this.hooks.keys()) {
+                                        value = await this.runHook(key_, value, response);
+                                    }
+                                    /* eslint-enable no-await-in-loop */
+                                }
+                                await this.cache.set(key, value, ttl);
+                            }
+                            catch (error) {
+                                ee.emit('error', new CacheError(error));
+                            }
+                        })();
+                    }
+                    else if (options_.cache && revalidate) {
+                        (async () => {
+                            try {
+                                await this.cache.delete(key);
+                            }
+                            catch (error) {
+                                ee.emit('error', new CacheError(error));
+                            }
+                        })();
+                    }
+                    ee.emit('response', clonedResponse ?? response);
+                    if (typeof cb === 'function') {
+                        cb(clonedResponse ?? response);
+                    }
+                };
+                try {
+                    const request_ = this.cacheRequest(options_, handler);
+                    request_.once('error', requestErrorCallback);
+                    request_.once('abort', requestErrorCallback);
+                    request_.once('destroy', requestErrorCallback);
+                    ee.emit('request', request_);
+                }
+                catch (error) {
+                    ee.emit('error', new RequestError(error));
+                }
+            };
+            (async () => {
+                const get = async (options_) => {
+                    await Promise.resolve();
+                    const cacheEntry = options_.cache ? await this.cache.get(key) : undefined;
+                    if (typeof cacheEntry === 'undefined' && !options_.forceRefresh) {
+                        makeRequest(options_);
+                        return;
+                    }
+                    const policy = httpCacheSemantics.fromObject(cacheEntry.cachePolicy);
+                    if (policy.satisfiesWithoutRevalidation(options_) && !options_.forceRefresh) {
+                        const headers = convertHeaders(policy.responseHeaders());
+                        const response = new Response({ statusCode: cacheEntry.statusCode, headers, body: cacheEntry.body, url: cacheEntry.url });
+                        response.cachePolicy = policy;
+                        response.fromCache = true;
+                        ee.emit('response', response);
+                        if (typeof cb === 'function') {
+                            cb(response);
+                        }
+                    }
+                    else if (policy.satisfiesWithoutRevalidation(options_) && Date.now() >= policy.timeToLive() && options_.forceRefresh) {
+                        await this.cache.delete(key);
+                        options_.headers = policy.revalidationHeaders(options_);
+                        makeRequest(options_);
+                    }
+                    else {
+                        revalidate = cacheEntry;
+                        options_.headers = policy.revalidationHeaders(options_);
+                        makeRequest(options_);
+                    }
+                };
+                const errorHandler = (error) => ee.emit('error', new CacheError(error));
+                if (this.cache instanceof src) {
+                    const cachek = this.cache;
+                    cachek.once('error', errorHandler);
+                    ee.on('error', () => cachek.removeListener('error', errorHandler));
+                }
+                try {
+                    await get(options);
+                }
+                catch (error) {
+                    if (options.automaticFailover && !madeRequest) {
+                        makeRequest(options);
+                    }
+                    ee.emit('error', new CacheError(error));
+                }
+            })();
+            return ee;
+        };
+        this.addHook = (name, fn) => {
+            if (!this.hooks.has(name)) {
+                this.hooks.set(name, fn);
+            }
+        };
+        this.removeHook = (name) => this.hooks.delete(name);
+        this.getHook = (name) => this.hooks.get(name);
+        this.runHook = async (name, ...args) => this.hooks.get(name)?.(...args);
+        if (cacheAdapter instanceof src) {
+            this.cache = cacheAdapter;
+        }
+        else if (typeof cacheAdapter === 'string') {
+            this.cache = new src({
+                uri: cacheAdapter,
+                namespace: 'cacheable-request',
+            });
+        }
+        else {
+            this.cache = new src({
+                store: cacheAdapter,
+                namespace: 'cacheable-request',
+            });
+        }
+        this.request = this.request.bind(this);
+        this.cacheRequest = cacheRequest;
+    }
 }
-
-CacheableRequest.RequestError = class extends Error {
-	constructor(error) {
-		super(error.message);
-		this.name = 'RequestError';
-		Object.assign(this, error);
-	}
+const entries = Object.entries;
+const cloneResponse = (response) => {
+    const clone = new stream$2.PassThrough({ autoDestroy: false });
+    mimicResponse$2(response, clone);
+    return response.pipe(clone);
 };
-
-CacheableRequest.CacheError = class extends Error {
-	constructor(error) {
-		super(error.message);
-		this.name = 'CacheError';
-		Object.assign(this, error);
-	}
+const urlObjectToRequestOptions = (url) => {
+    const options = { ...url };
+    options.path = `${url.pathname || '/'}${url.search || ''}`;
+    delete options.pathname;
+    delete options.search;
+    return options;
 };
-
-var src = CacheableRequest;
+const normalizeUrlObject = (url) => 
+// If url was parsed by url.parse or new URL:
+// - hostname will be set
+// - host will be hostname[:port]
+// - port will be set if it was explicit in the parsed string
+// Otherwise, url was from request options:
+// - hostname or host may be set
+// - host shall not have port encoded
+({
+    protocol: url.protocol,
+    auth: url.auth,
+    hostname: url.hostname || url.host || 'localhost',
+    port: url.port,
+    pathname: url.pathname,
+    search: url.search,
+});
+const convertHeaders = (headers) => {
+    const result = [];
+    for (const name of Object.keys(headers)) {
+        result[name.toLowerCase()] = headers[name];
+    }
+    return result;
+};
 
 // We define these manually to ensure they're always copied
 // even if they would move up the prototype chain
@@ -90591,120 +90471,28 @@ var decompressResponse = response => {
 	return finalStream;
 };
 
-var getStream$2 = {exports: {}};
+const isFunction = (value) => (typeof value === "function");
 
-const {PassThrough: PassThroughStream} = Stream__default["default"];
-
-var bufferStream$1 = options => {
-	options = {...options};
-
-	const {array} = options;
-	let {encoding} = options;
-	const isBuffer = encoding === 'buffer';
-	let objectMode = false;
-
-	if (array) {
-		objectMode = !(encoding || isBuffer);
-	} else {
-		encoding = encoding || 'utf8';
-	}
-
-	if (isBuffer) {
-		encoding = null;
-	}
-
-	const stream = new PassThroughStream({objectMode});
-
-	if (encoding) {
-		stream.setEncoding(encoding);
-	}
-
-	let length = 0;
-	const chunks = [];
-
-	stream.on('data', chunk => {
-		chunks.push(chunk);
-
-		if (objectMode) {
-			length = chunks.length;
-		} else {
-			length += chunk.length;
-		}
-	});
-
-	stream.getBufferedValue = () => {
-		if (array) {
-			return chunks;
-		}
-
-		return isBuffer ? Buffer.concat(chunks, length) : chunks.join('');
-	};
-
-	stream.getBufferedLength = () => length;
-
-	return stream;
+const isAsyncIterable = (value) => (isFunction(value[Symbol.asyncIterator]));
+async function* readStream(readable) {
+    const reader = readable.getReader();
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+            break;
+        }
+        yield value;
+    }
+}
+const getStreamIterator = (source) => {
+    if (isAsyncIterable(source)) {
+        return source;
+    }
+    if (isFunction(source.getReader)) {
+        return readStream(source);
+    }
+    throw new TypeError("Unsupported data source: Expected either ReadableStream or async iterable.");
 };
-
-const {constants: BufferConstants} = require$$0__default$4["default"];
-const stream$1 = Stream__default["default"];
-const {promisify: promisify$1} = require$$6__default["default"];
-const bufferStream = bufferStream$1;
-
-const streamPipelinePromisified = promisify$1(stream$1.pipeline);
-
-class MaxBufferError extends Error {
-	constructor() {
-		super('maxBuffer exceeded');
-		this.name = 'MaxBufferError';
-	}
-}
-
-async function getStream$1(inputStream, options) {
-	if (!inputStream) {
-		throw new Error('Expected a stream');
-	}
-
-	options = {
-		maxBuffer: Infinity,
-		...options
-	};
-
-	const {maxBuffer} = options;
-	const stream = bufferStream(options);
-
-	await new Promise((resolve, reject) => {
-		const rejectPromise = error => {
-			// Don't retrieve an oversized buffer.
-			if (error && stream.getBufferedLength() <= BufferConstants.MAX_LENGTH) {
-				error.bufferedData = stream.getBufferedValue();
-			}
-
-			reject(error);
-		};
-
-		(async () => {
-			try {
-				await streamPipelinePromisified(inputStream, stream);
-				resolve();
-			} catch (error) {
-				rejectPromise(error);
-			}
-		})();
-
-		stream.on('data', () => {
-			if (stream.getBufferedLength() > maxBuffer) {
-				rejectPromise(new MaxBufferError());
-			}
-		});
-	});
-
-	return stream.getBufferedValue();
-}
-
-getStream$2.exports = getStream$1;
-var buffer = getStream$2.exports.buffer = (stream, options) => getStream$1(stream, {...options, encoding: 'buffer'});
-getStream$2.exports.array = (stream, options) => getStream$1(stream, {...options, array: true});
-getStream$2.exports.MaxBufferError = MaxBufferError;
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
 function createBoundary() {
@@ -90739,22 +90527,19 @@ function isPlainObject(value) {
 }
 
 function getProperty(target, prop) {
-    if (typeof prop !== "string") {
-        return target[prop];
-    }
-    for (const [name, value] of Object.entries(target)) {
-        if (prop.toLowerCase() === name.toLowerCase()) {
-            return value;
+    if (typeof prop === "string") {
+        for (const [name, value] of Object.entries(target)) {
+            if (prop.toLowerCase() === name.toLowerCase()) {
+                return value;
+            }
         }
     }
     return undefined;
 }
-const proxyHeaders = (target) => new Proxy(target, {
+const proxyHeaders = (object) => new Proxy(object, {
     get: (target, prop) => getProperty(target, prop),
     has: (target, prop) => getProperty(target, prop) !== undefined
 });
-
-const isFunction = (value) => (typeof value === "function");
 
 const isFormData$1 = (value) => Boolean(value
     && isFunction(value.constructor)
@@ -90774,9 +90559,7 @@ const isFile = (value) => Boolean(value
     && isFunction(value.constructor)
     && value[Symbol.toStringTag] === "File"
     && isFunction(value.stream)
-    && value.name != null
-    && value.size != null
-    && value.lastModified != null);
+    && value.name != null);
 
 var __classPrivateFieldSet = (undefined && undefined.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
@@ -90831,11 +90614,15 @@ class FormDataEncoder {
         this.boundary = `form-data-boundary-${boundary}`;
         this.contentType = `multipart/form-data; boundary=${this.boundary}`;
         __classPrivateFieldSet(this, _FormDataEncoder_footer, __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(`${__classPrivateFieldGet(this, _FormDataEncoder_DASHES, "f")}${this.boundary}${__classPrivateFieldGet(this, _FormDataEncoder_DASHES, "f")}${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f").repeat(2)}`), "f");
-        this.contentLength = __classPrivateFieldGet(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getContentLength).call(this);
-        this.headers = proxyHeaders(Object.freeze({
-            "Content-Type": this.contentType,
-            "Content-Length": this.contentLength
-        }));
+        const headers = {
+            "Content-Type": this.contentType
+        };
+        const contentLength = __classPrivateFieldGet(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getContentLength).call(this);
+        if (contentLength) {
+            this.contentLength = contentLength;
+            headers["Content-Length"] = contentLength;
+        }
+        this.headers = proxyHeaders(Object.freeze(headers));
         Object.defineProperties(this, {
             boundary: readonlyProp,
             contentType: readonlyProp,
@@ -90844,7 +90631,7 @@ class FormDataEncoder {
         });
     }
     getContentLength() {
-        return Number(this.contentLength);
+        return this.contentLength == null ? undefined : Number(this.contentLength);
     }
     *values() {
         for (const [name, raw] of __classPrivateFieldGet(this, _FormDataEncoder_form, "f")) {
@@ -90858,7 +90645,7 @@ class FormDataEncoder {
     async *encode() {
         for (const part of this.values()) {
             if (isFile(part)) {
-                yield* part.stream();
+                yield* getStreamIterator(part.stream());
             }
             else {
                 yield part;
@@ -90873,7 +90660,10 @@ class FormDataEncoder {
             header += `; filename="${escapeName(value.name)}"${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f")}`;
             header += `Content-Type: ${value.type || "application/octet-stream"}`;
         }
-        if (__classPrivateFieldGet(this, _FormDataEncoder_options, "f").enableAdditionalHeaders === true) {
+        const size = isFile(value) ? value.size : value.byteLength;
+        if (__classPrivateFieldGet(this, _FormDataEncoder_options, "f").enableAdditionalHeaders === true
+            && size != null
+            && !isNaN(size)) {
             header += `${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f")}Content-Length: ${isFile(value) ? value.size : value.byteLength}`;
         }
         return __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(`${header}${__classPrivateFieldGet(this, _FormDataEncoder_CRLF, "f").repeat(2)}`);
@@ -90881,8 +90671,12 @@ class FormDataEncoder {
         let length = 0;
         for (const [name, raw] of __classPrivateFieldGet(this, _FormDataEncoder_form, "f")) {
             const value = isFile(raw) ? raw : __classPrivateFieldGet(this, _FormDataEncoder_encoder, "f").encode(normalizeValue(raw));
+            const size = isFile(value) ? value.size : value.byteLength;
+            if (size == null || isNaN(size)) {
+                return undefined;
+            }
             length += __classPrivateFieldGet(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getFieldHeader).call(this, name, value).byteLength;
-            length += isFile(value) ? value.size : value.byteLength;
+            length += size;
             length += __classPrivateFieldGet(this, _FormDataEncoder_CRLF_BYTES_LENGTH, "f");
         }
         return String(length + __classPrivateFieldGet(this, _FormDataEncoder_footer, "f").byteLength);
@@ -91181,29 +90975,13 @@ const calculateRetryDelay = ({ attemptCount, retryOptions, error, retryAfter, co
     return Math.min(((2 ** (attemptCount - 1)) * 1000), retryOptions.backoffLimit) + noise;
 };
 
-function lowercaseKeys(object) {
-	return Object.fromEntries(Object.entries(object).map(([key, value]) => [key.toLowerCase(), value]));
-}
-
-var source$1 = {exports: {}};
-
-const {
-	V4MAPPED,
-	ADDRCONFIG,
-	ALL,
-	promises: {
-		Resolver: AsyncResolver
-	},
-	lookup: dnsLookup
-} = require$$0__default$5["default"];
-const {promisify} = require$$6__default["default"];
-const os = require$$1__default["default"];
+const {Resolver: AsyncResolver} = node_dns.promises;
 
 const kCacheableLookupCreateConnection = Symbol('cacheableLookupCreateConnection');
 const kCacheableLookupInstance = Symbol('cacheableLookupInstance');
 const kExpires = Symbol('expires');
 
-const supportsALL = typeof ALL === 'number';
+const supportsALL = typeof node_dns.ALL === 'number';
 
 const verifyAgent = agent => {
 	if (!(agent && typeof agent.createConnection === 'function')) {
@@ -91226,7 +91004,7 @@ const getIfaceInfo = () => {
 	let has4 = false;
 	let has6 = false;
 
-	for (const device of Object.values(os.networkInterfaces())) {
+	for (const device of Object.values(os__default["default"].networkInterfaces())) {
 		for (const iface of device) {
 			if (iface.internal) {
 				continue;
@@ -91277,21 +91055,25 @@ class CacheableLookup {
 		fallbackDuration = 3600,
 		errorTtl = 0.15,
 		resolver = new AsyncResolver(),
-		lookup = dnsLookup
+		lookup = node_dns.lookup
 	} = {}) {
 		this.maxTtl = maxTtl;
 		this.errorTtl = errorTtl;
 
 		this._cache = cache;
 		this._resolver = resolver;
-		this._dnsLookup = lookup && promisify(lookup);
+		this._dnsLookup = lookup && node_util.promisify(lookup);
+		this.stats = {
+			cache: 0,
+			query: 0
+		};
 
 		if (this._resolver instanceof AsyncResolver) {
 			this._resolve4 = this._resolver.resolve4.bind(this._resolver);
 			this._resolve6 = this._resolver.resolve6.bind(this._resolver);
 		} else {
-			this._resolve4 = promisify(this._resolver.resolve4.bind(this._resolver));
-			this._resolve6 = promisify(this._resolver.resolve6.bind(this._resolver));
+			this._resolve4 = node_util.promisify(this._resolver.resolve4.bind(this._resolver));
+			this._resolve6 = node_util.promisify(this._resolver.resolve6.bind(this._resolver));
 		}
 
 		this._iface = getIfaceInfo();
@@ -91348,7 +91130,7 @@ class CacheableLookup {
 			if (options.all) {
 				callback(null, result);
 			} else {
-				callback(null, result.address, result.family, result.expires, result.ttl);
+				callback(null, result.address, result.family, result.expires, result.ttl, result.source);
 			}
 		}, callback);
 	}
@@ -91365,8 +91147,8 @@ class CacheableLookup {
 		if (options.family === 6) {
 			const filtered = cached.filter(entry => entry.family === 6);
 
-			if (options.hints & V4MAPPED) {
-				if ((supportsALL && options.hints & ALL) || filtered.length === 0) {
+			if (options.hints & node_dns.V4MAPPED) {
+				if ((supportsALL && options.hints & node_dns.ALL) || filtered.length === 0) {
 					map4to6(cached);
 				} else {
 					cached = filtered;
@@ -91378,7 +91160,7 @@ class CacheableLookup {
 			cached = cached.filter(entry => entry.family === 4);
 		}
 
-		if (options.hints & ADDRCONFIG) {
+		if (options.hints & node_dns.ADDRCONFIG) {
 			const {_iface} = this;
 			cached = cached.filter(entry => entry.family === 6 ? _iface.has6 : _iface.has4);
 		}
@@ -91399,17 +91181,23 @@ class CacheableLookup {
 	}
 
 	async query(hostname) {
+		let source = 'cache';
 		let cached = await this._cache.get(hostname);
+
+		if (cached) {
+			this.stats.cache++;
+		}
 
 		if (!cached) {
 			const pending = this._pending[hostname];
-
 			if (pending) {
+				this.stats.cache++;
 				cached = await pending;
 			} else {
+				source = 'query';
 				const newPromise = this.queryAndCache(hostname);
 				this._pending[hostname] = newPromise;
-
+				this.stats.query++;
 				try {
 					cached = await newPromise;
 				} finally {
@@ -91419,7 +91207,7 @@ class CacheableLookup {
 		}
 
 		cached = cached.map(entry => {
-			return {...entry};
+			return {...entry, source};
 		});
 
 		return cached;
@@ -91630,9 +91418,6 @@ class CacheableLookup {
 	}
 }
 
-source$1.exports = CacheableLookup;
-source$1.exports.default = CacheableLookup;
-
 class QuickLRU$2 {
 	constructor(options = {}) {
 		if (!(options.maxSize && options.maxSize > 0)) {
@@ -91790,7 +91575,7 @@ var delayAsyncDestroy$2 = stream => {
 // See https://github.com/facebook/jest/issues/2549
 // eslint-disable-next-line node/prefer-global/url
 const {URL: URL$4} = Url__default["default"];
-const EventEmitter = require$$0__default$1["default"];
+const EventEmitter = require$$4__default["default"];
 const tls$3 = require$$1__default$1["default"];
 const http2$2 = require$$3__default["default"];
 const QuickLRU$1 = quickLru;
@@ -93284,6 +93069,8 @@ class ClientRequest$1 extends Writable {
 				job();
 			}
 
+			this[kJobs].length = 0;
+
 			this.emit('socket', this.socket);
 		};
 
@@ -93465,7 +93252,7 @@ var resolveAlpn = (options = {}, connect = tls$2.connect) => new Promise((resolv
 	})();
 });
 
-const {isIP} = require$$0__default$6["default"];
+const {isIP} = require$$0__default$4["default"];
 const assert = require$$5__default["default"];
 
 const getHost = host => {
@@ -93709,9 +93496,10 @@ const JSStreamSocket$2 = (new tls$1.TLSSocket(new stream.PassThrough()))._handle
 var jsStreamSocket = JSStreamSocket$2;
 
 class UnexpectedStatusCodeError$2 extends Error {
-	constructor(statusCode) {
-		super(`The proxy server rejected the request with status code ${statusCode}`);
+	constructor(statusCode, statusMessage = '') {
+		super(`The proxy server rejected the request with status code ${statusCode} (${statusMessage || 'empty status message'})`);
 		this.statusCode = statusCode;
+		this.statusMessage = statusMessage;
 	}
 }
 
@@ -93800,7 +93588,7 @@ const createConnection = (self, options, callback) => {
 				const statusCode = headers[':status'];
 
 				if (statusCode !== 200) {
-					callback(new UnexpectedStatusCodeError$1(statusCode));
+					callback(new UnexpectedStatusCodeError$1(statusCode, ''));
 					return;
 				}
 
@@ -93878,9 +93666,9 @@ class Http2OverHttpX$2 extends Agent$1 {
 	async createConnection(origin, options) {
 		const authority = `${origin.hostname}:${origin.port || 443}`;
 
-		const [stream, statusCode] = await this._getProxyStream(authority);
+		const [stream, statusCode, statusMessage] = await this._getProxyStream(authority);
 		if (statusCode !== 200) {
-			throw new UnexpectedStatusCodeError(statusCode);
+			throw new UnexpectedStatusCodeError(statusCode, statusMessage);
 		}
 
 		if (this.proxyOptions.raw) {
@@ -93929,7 +93717,7 @@ class Http2OverHttp2$1 extends Http2OverHttpX$1 {
 		const stream = await globalAgent$1.request(proxyOptions.url, proxyOptions, headers);
 		const statusCode = await getStatusCode(stream);
 
-		return [stream, statusCode];
+		return [stream, statusCode, ''];
 	}
 }
 
@@ -93945,7 +93733,7 @@ const getStream = request => new Promise((resolve, reject) => {
 		socket.unshift(head);
 
 		request.off('error', reject);
-		resolve([socket, response.statusCode]);
+		resolve([socket, response.statusCode, response.statusMessage]);
 	};
 
 	request.once('error', reject);
@@ -94081,7 +93869,7 @@ const getGlobalDnsCache = () => {
     if (globalDnsCache) {
         return globalDnsCache;
     }
-    globalDnsCache = new source$1.exports();
+    globalDnsCache = new CacheableLookup();
     return globalDnsCache;
 };
 const defaultInternals = {
@@ -94222,7 +94010,7 @@ const defaultInternals = {
             const next = parsed.find(entry => entry.parameters.rel === 'next' || entry.parameters.rel === '"next"');
             if (next) {
                 return {
-                    url: new node_url.URL(next.reference, response.url),
+                    url: new urlLib.URL(next.reference, response.url),
                 };
             }
             return false;
@@ -94263,7 +94051,7 @@ const cloneInternals = (internals) => {
             beforeRetry: [...hooks.beforeRetry],
             afterResponse: [...hooks.afterResponse],
         },
-        searchParams: internals.searchParams ? new node_url.URLSearchParams(internals.searchParams) : undefined,
+        searchParams: internals.searchParams ? new urlLib.URLSearchParams(internals.searchParams) : undefined,
         pagination: { ...internals.pagination },
     };
     if (result.url !== undefined) {
@@ -94520,6 +94308,7 @@ class Options {
             if (!(key in this._internals.agent)) {
                 throw new TypeError(`Unexpected agent option: ${key}`);
             }
+            // @ts-expect-error - No idea why `value[key]` doesn't work here.
             assert$1.any([is.object, is.undefined], value[key]);
         }
         if (this._merging) {
@@ -94579,6 +94368,7 @@ class Options {
             if (!(key in this._internals.timeout)) {
                 throw new Error(`Unexpected timeout option: ${key}`);
             }
+            // @ts-expect-error - No idea why `value[key]` doesn't work here.
             assert$1.any([is.number, is.undefined], value[key]);
         }
         if (this._merging) {
@@ -94743,7 +94533,7 @@ class Options {
             throw new Error('`url` must not start with a slash');
         }
         const urlString = `${this.prefixUrl}${value.toString()}`;
-        const url = new node_url.URL(urlString);
+        const url = new urlLib.URL(urlString);
         this._internals.url = url;
         if (url.protocol === 'unix:') {
             url.href = `http://unix${url.pathname}${url.search}`;
@@ -94880,7 +94670,7 @@ class Options {
             return this._internals.url.searchParams;
         }
         if (this._internals.searchParams === undefined) {
-            this._internals.searchParams = new node_url.URLSearchParams();
+            this._internals.searchParams = new urlLib.URLSearchParams();
         }
         return this._internals.searchParams;
     }
@@ -94897,14 +94687,14 @@ class Options {
         const searchParameters = this.searchParams;
         let updated;
         if (is.string(value)) {
-            updated = new node_url.URLSearchParams(value);
+            updated = new urlLib.URLSearchParams(value);
         }
-        else if (value instanceof node_url.URLSearchParams) {
+        else if (value instanceof urlLib.URLSearchParams) {
             updated = value;
         }
         else {
             validateSearchParameters(value);
-            updated = new node_url.URLSearchParams();
+            updated = new urlLib.URLSearchParams();
             // eslint-disable-next-line guard-for-in
             for (const key in value) {
                 const entry = value[key];
@@ -95031,8 +94821,7 @@ class Options {
                 throw new Error(`Unexpected hook event: ${knownHookEvent}`);
             }
             const typedKnownHookEvent = knownHookEvent;
-            const typedValue = value;
-            const hooks = typedValue[typedKnownHookEvent];
+            const hooks = value[typedKnownHookEvent];
             assert$1.any([is.array, is.undefined], hooks);
             if (hooks) {
                 for (const hook of hooks) {
@@ -95058,7 +94847,7 @@ class Options {
     Defines if redirect responses should be followed automatically.
 
     Note that if a `303` is sent by the server in response to any request type (`POST`, `DELETE`, etc.), Got will automatically request the resource pointed to in the location header via `GET`.
-    This is in accordance with [the spec](https://tools.ietf.org/html/rfc7231#section-6.4.4).
+    This is in accordance with [the spec](https://tools.ietf.org/html/rfc7231#section-6.4.4). You can optionally turn on this behavior also for other redirect codes - see `methodRewriting`.
 
     @default true
     */
@@ -95187,7 +94976,7 @@ class Options {
     However, the [HTTP/2 specification](https://tools.ietf.org/html/rfc7540#section-8.1.3) says that `An HTTP GET request includes request header fields and no payload body`, therefore when using the HTTP/2 protocol this option will have no effect.
     This option is only meant to interact with non-compliant servers when you have no other choice.
 
-    __Note__: The [RFC 7321](https://tools.ietf.org/html/rfc7231#section-4.3.1) doesn't specify any particular behavior for the GET method having a payload, therefore __it's considered an [anti-pattern](https://en.wikipedia.org/wiki/Anti-pattern)__.
+    __Note__: The [RFC 7231](https://tools.ietf.org/html/rfc7231#section-4.3.1) doesn't specify any particular behavior for the GET method having a payload, therefore __it's considered an [anti-pattern](https://en.wikipedia.org/wiki/Anti-pattern)__.
 
     @default false
     */
@@ -95218,9 +95007,12 @@ class Options {
         }
     }
     /**
-    Specifies if the redirects should be [rewritten as `GET`](https://tools.ietf.org/html/rfc7231#section-6.4).
+    Specifies if the HTTP request method should be [rewritten as `GET`](https://tools.ietf.org/html/rfc7231#section-6.4) on redirects.
 
-    If `false`, when sending a POST request and receiving a `302`, it will resend the body to the new location using the same HTTP method (`POST` in this case).
+    As the [specification](https://tools.ietf.org/html/rfc7231#section-6.4) prefers to rewrite the HTTP method only on `303` responses, this is Got's default behavior.
+    Setting `methodRewriting` to `true` will also rewrite `301` and `302` responses, as allowed by the spec. This is the behavior followed by `curl` and browsers.
+
+    __Note__: Got never performs method rewriting on `307` and `308` responses, as this is [explicitly prohibited by the specification](https://www.rfc-editor.org/rfc/rfc7231#section-6.4.7).
 
     @default false
     */
@@ -95701,8 +95493,6 @@ class Options {
         Object.freeze(options.retry.errorCodes);
         Object.freeze(options.retry.methods);
         Object.freeze(options.retry.statusCodes);
-        Object.freeze(options.context);
-        Object.freeze(options.signal);
     }
 }
 
@@ -95715,7 +95505,7 @@ const isResponseOk = (response) => {
 An error to be thrown when server response code is 2xx, and parsing body fails.
 Includes a `response` property.
 */
-class ParseError extends RequestError {
+class ParseError extends RequestError$1 {
     constructor(error, response) {
         const { options } = response.request;
         super(`${error.message} in "${options.url.toString()}"`, error, response.request);
@@ -95766,7 +95556,7 @@ const proxiedRequestEvents$1 = [
     'upgrade',
 ];
 const noop = () => { };
-class Request extends node_stream.Duplex {
+class Request extends stream$2.Duplex {
     constructor(url, options, defaults) {
         super({
             // Don't destroy immediately, as the error may be emitted on unsuccessful retry
@@ -95896,6 +95686,12 @@ class Request extends node_stream.Duplex {
             writable: true,
             value: void 0
         });
+        Object.defineProperty(this, "_removeListeners", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
         Object.defineProperty(this, "_nativeResponse", {
             enumerable: true,
             configurable: true,
@@ -95929,6 +95725,7 @@ class Request extends node_stream.Duplex {
         this._unproxyEvents = noop;
         this._triggerRead = false;
         this._cancelTimeouts = noop;
+        this._removeListeners = noop;
         this._jobs = [];
         this._flushed = false;
         this._requestInitialized = false;
@@ -95967,12 +95764,6 @@ class Request extends node_stream.Duplex {
             };
             return;
         }
-        if (this.options.signal?.aborted) {
-            this.destroy(new AbortError(this));
-        }
-        this.options.signal?.addEventListener('abort', () => {
-            this.destroy(new AbortError(this));
-        });
         // Important! If you replace `body` in a handler with another stream, make sure it's readable first.
         // The below is run only once.
         const { body } = this.options;
@@ -95988,6 +95779,20 @@ class Request extends node_stream.Duplex {
                     };
                 }
             });
+        }
+        if (this.options.signal) {
+            const abort = () => {
+                this.destroy(new AbortError(this));
+            };
+            if (this.options.signal.aborted) {
+                abort();
+            }
+            else {
+                this.options.signal.addEventListener('abort', abort);
+                this._removeListeners = () => {
+                    this.options.signal.removeEventListener('abort', abort);
+                };
+            }
         }
     }
     async flush() {
@@ -96024,8 +95829,8 @@ class Request extends node_stream.Duplex {
         const { response, options } = this;
         const attemptCount = this.retryCount + (error.name === 'RetryError' ? 0 : 1);
         this._stopReading = true;
-        if (!(error instanceof RequestError)) {
-            error = new RequestError(error.message, error, this);
+        if (!(error instanceof RequestError$1)) {
+            error = new RequestError$1(error.message, error, this);
         }
         const typedError = error;
         void (async () => {
@@ -96075,7 +95880,7 @@ class Request extends node_stream.Duplex {
                     });
                 }
                 catch (error_) {
-                    void this._error(new RequestError(error_.message, error_, this));
+                    void this._error(new RequestError$1(error_.message, error_, this));
                     return;
                 }
                 if (backoff) {
@@ -96097,7 +95902,7 @@ class Request extends node_stream.Duplex {
                         }
                     }
                     catch (error_) {
-                        void this._error(new RequestError(error_.message, error, this));
+                        void this._error(new RequestError$1(error_.message, error, this));
                         return;
                     }
                     // Something forced us to abort the retry
@@ -96185,6 +95990,7 @@ class Request extends node_stream.Duplex {
         // Prevent further retries
         this._stopRetry();
         this._cancelTimeouts();
+        this._removeListeners();
         if (this.options) {
             const { body } = this.options;
             if (is.nodeStream(body)) {
@@ -96194,8 +96000,8 @@ class Request extends node_stream.Duplex {
         if (this._request) {
             this._request.destroy();
         }
-        if (error !== null && !is.undefined(error) && !(error instanceof RequestError)) {
-            error = new RequestError(error.message, error, this);
+        if (error !== null && !is.undefined(error) && !(error instanceof RequestError$1)) {
+            error = new RequestError$1(error.message, error, this);
         }
         callback(error);
     }
@@ -96234,7 +96040,9 @@ class Request extends node_stream.Duplex {
                     if (noContentType) {
                         headers['content-type'] = encoder.headers['Content-Type'];
                     }
-                    headers['content-length'] = encoder.headers['Content-Length'];
+                    if ('Content-Length' in encoder.headers) {
+                        headers['content-length'] = encoder.headers['Content-Length'];
+                    }
                     options.body = encoder.encode();
                 }
                 // Special case for https://github.com/form-data/form-data
@@ -96248,7 +96056,7 @@ class Request extends node_stream.Duplex {
                 }
                 const { form } = options;
                 options.form = undefined;
-                options.body = (new node_url.URLSearchParams(form)).toString();
+                options.body = (new urlLib.URLSearchParams(form)).toString();
             }
             else {
                 if (noContentType) {
@@ -96358,10 +96166,10 @@ class Request extends node_stream.Duplex {
             }
             this._request = undefined;
             const updatedOptions = new Options(undefined, undefined, this.options);
-            const shouldBeGet = statusCode === 303 && updatedOptions.method !== 'GET' && updatedOptions.method !== 'HEAD';
-            if (shouldBeGet || updatedOptions.methodRewriting) {
-                // Server responded with "see other", indicating that the resource exists at another location,
-                // and the client should request it from that location via GET or HEAD.
+            const serverRequestedGet = statusCode === 303 && updatedOptions.method !== 'GET' && updatedOptions.method !== 'HEAD';
+            const canRewrite = statusCode !== 307 && statusCode !== 308;
+            const userRequestedGet = updatedOptions.methodRewriting && canRewrite;
+            if (serverRequestedGet || userRequestedGet) {
                 updatedOptions.method = 'GET';
                 updatedOptions.body = undefined;
                 updatedOptions.json = undefined;
@@ -96371,9 +96179,9 @@ class Request extends node_stream.Duplex {
             try {
                 // We need this in order to support UTF-8
                 const redirectBuffer = node_buffer.Buffer.from(response.headers.location, 'binary').toString();
-                const redirectUrl = new node_url.URL(redirectBuffer, url);
+                const redirectUrl = new urlLib.URL(redirectBuffer, url);
                 if (!isUnixSocketURL(url) && isUnixSocketURL(redirectUrl)) {
-                    this._beforeError(new RequestError('Cannot redirect to UNIX socket', {}, this));
+                    this._beforeError(new RequestError$1('Cannot redirect to UNIX socket', {}, this));
                     return;
                 }
                 // Redirecting to a different site, clear sensitive data.
@@ -96413,6 +96221,10 @@ class Request extends node_stream.Duplex {
             }
             return;
         }
+        // `HTTPError`s always have `error.response.body` defined.
+        // Therefore we cannot retry if `options.throwHttpErrors` is false.
+        // On the last retry, if `options.throwHttpErrors` is false, we would need to return the body,
+        // but that wouldn't be possible since the body would be already read in `error.response.body`.
         if (options.isStream && options.throwHttpErrors && !isResponseOk(typedResponse)) {
             this._beforeError(new HTTPError(typedResponse));
             return;
@@ -96497,7 +96309,7 @@ class Request extends node_stream.Duplex {
             this._aborted = true;
             // Force clean-up, because some packages (e.g. nock) don't do this.
             request.destroy();
-            error = error instanceof TimeoutError ? new TimeoutError$1(error, this.timings, this) : new RequestError(error.message, error, this);
+            error = error instanceof TimeoutError ? new TimeoutError$1(error, this.timings, this) : new RequestError$1(error.message, error, this);
             this._beforeError(error);
         });
         this._unproxyEvents = proxyEvents$2(request, this, proxiedRequestEvents$1);
@@ -96547,7 +96359,7 @@ class Request extends node_stream.Duplex {
     }
     _prepareCache(cache) {
         if (!cacheableStore.has(cache)) {
-            cacheableStore.set(cache, new src(((requestOptions, handler) => {
+            const cacheableRequest = new CacheableRequest(((requestOptions, handler) => {
                 const result = requestOptions._request(requestOptions, handler);
                 // TODO: remove this when `cacheable-request` supports async request functions.
                 if (is.promise(result)) {
@@ -96585,7 +96397,8 @@ class Request extends node_stream.Duplex {
                     };
                 }
                 return result;
-            }), cache));
+            }), cache);
+            cacheableStore.set(cache, cacheableRequest.request());
         }
     }
     async _createCacheableRequest(url, options) {
@@ -96662,6 +96475,7 @@ class Request extends node_stream.Duplex {
         if (options.cache) {
             this._requestOptions._request = request;
             this._requestOptions.cache = options.cache;
+            this._requestOptions.body = options.body;
             this._prepareCache(options.cache);
         }
         // Cache support
@@ -96694,21 +96508,28 @@ class Request extends node_stream.Duplex {
             }
         }
         catch (error) {
-            if (error instanceof src.CacheError) {
-                throw new CacheError(error, this);
+            if (error instanceof CacheError) {
+                throw new CacheError$1(error, this);
             }
             throw error;
         }
     }
     async _error(error) {
         try {
-            for (const hook of this.options.hooks.beforeError) {
-                // eslint-disable-next-line no-await-in-loop
-                error = await hook(error);
+            if (error instanceof HTTPError && !this.options.throwHttpErrors) {
+                // This branch can be reached only when using the Promise API
+                // Skip calling the hooks on purpose.
+                // See https://github.com/sindresorhus/got/issues/2103
+            }
+            else {
+                for (const hook of this.options.hooks.beforeError) {
+                    // eslint-disable-next-line no-await-in-loop
+                    error = await hook(error);
+                }
             }
         }
         catch (error_) {
-            error = new RequestError(error_.message, error_, this);
+            error = new RequestError$1(error_.message, error_, this);
         }
         this.destroy(error);
     }
@@ -96718,7 +96539,8 @@ class Request extends node_stream.Duplex {
             return;
         }
         this._request.write(chunk, encoding, (error) => {
-            if (!error) {
+            // The `!destroyed` check is required to prevent `uploadProgress` being emitted after the stream was destroyed
+            if (!error && !this._request.destroyed) {
                 this._uploadedSize += node_buffer.Buffer.byteLength(chunk, encoding);
                 const progress = this.uploadProgress;
                 if (progress.percent < 1) {
@@ -96827,7 +96649,7 @@ class Request extends node_stream.Duplex {
 /**
 An error to be thrown when the request is aborted with `.cancel()`.
 */
-class CancelError extends RequestError {
+class CancelError extends RequestError$1 {
     constructor(request) {
         super('Promise was canceled', {}, request);
         this.name = 'CancelError';
@@ -96852,7 +96674,7 @@ function asPromise(firstRequest) {
     let globalRequest;
     let globalResponse;
     let normalizedOptions;
-    const emitter = new node_events.EventEmitter();
+    const emitter = new EventEmitter$2.EventEmitter();
     const promise = new PCancelable((resolve, reject, onCancel) => {
         onCancel(() => {
             globalRequest.destroy();
