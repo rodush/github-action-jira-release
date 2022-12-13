@@ -3,7 +3,7 @@ import JiraConfig from './config'
 
 const jiraClient = got.extend({
   prefixUrl: JiraConfig.JiraDomain,
-  options: { auth: JiraConfig.JiraAuthCredentials },
+  auth: JiraConfig.JiraAuthCredentials,
 })
 
 export default jiraClient
