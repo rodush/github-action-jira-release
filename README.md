@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Create Jira Release
         id: jira-release
-        uses: rodush/github-actions-jira-release@v1
+        uses: rodush/github-action-jira-release@v1
         with:
           project_id: 13327
           project_key: "TRS"
