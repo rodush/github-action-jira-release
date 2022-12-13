@@ -1,28 +1,36 @@
 # Jira Release github action
 
-The purpose of this github action is to synchronize Releases in Github with the Releases in Jira (Cloud).  
+The purpose of this github action is to synchronize Releases in Github with the Releases in Jira (Cloud).
 
 ## How it works
 
-When a new Pre-Release is published in Github (essentially, when a new tag is created), the event is emitted to which Github Actions enabled for the repository can react.
-The action will fetch details about the Release - the name and the tag. Then, it will grab the last 2 tags and, will get the change log between those, loop through each commit, and from the commit summary will try to extract the JIRA issue number.
+When a new Pre-Release is published in Github (essentially, when a new tag is created), the `release` event of type `published` is emitted. It is possible to configure GHA workflow to react on that event.
 
-**WARNING**: The action is built with the assumption that commit messages are written in a certain format: `JIRA-123: Commit summary message` (actually, it's a format supported by the commitizen project, see <https://www.npmjs.com/package/commitlint-config-jira>).
+The `Jira Release` action will fetch details about the Release - the name and the tag. Then, it will grab the last 2 tags, and will get the change log between those, looping through each commit.
 
-Next, the Action will go to Jira and create a new Release named after the repository name concatenated via '-' with the tag name (if tag starts with the `v` prefix, then this prefix will be dropped). The title of the Github Release will be used as a description of the Release in Jira.
+From each commit's summary the JIRA issue number will be extracted.
+
+**NOTE**: *The action is built with the assumption that commit messages are written in a certain format: `JIRA-123: Commit summary message` (essentially, it is the format supported by the commitizen project, see <https://www.npmjs.com/package/commitlint-config-jira>).*
+
+Next, the Action will go to Jira (via REST API) and create a new Release named after the repository name concatenated via '-' with the tag name.
+
+**NOTE**: *If tag's name starts with the `v` prefix, then the prefix will be dropped.*
+
+The title of the Github Release will be used as a description of the Release in Jira.
 
 **Example:**
 
 ![](./docs/jira-releases-page.png)
 
-Eventually, the Action will update all the relevant Jira tickets with the "Fix versions" set to the current Jira Release name.\
-Keep in mind that the version will be appended to already existing versions on the ticket with the `update` operation:
+Eventually, the Action will update all the relevant Jira tickets with the "Fix versions" set to the current Jira Release name.
+
+Keep in mind that the version will be appended to the already existing list of versions assigned to the ticket (the `update` operation is used):
 
 ![](docs/jira-fix-versions.png)
 
 ## How to use
 
-In the `.github/` directory within the repository create a new workflow file with the contents like this:
+In the `.github/` directory within the repository create a new workflow file with the content like this:
 
 ```yaml
 name: Sync Github and Jira release
@@ -64,13 +72,14 @@ The action requires 2 input parameters provided:
 - `project_id` , used in the API calls
 - `project_key`, used in the regular expression to extract Jira ticket number from the commit summary message
 
-It also requires 4 environment variables:
+The action requires 4 environment variables:
 
 - `JIRA_API_USER`
 - `JIRA_API_TOKEN`
 - `ATLASSIAN_CLOUD_DOMAIN`
 - `GITHUB_TOKEN`
 
-### Permissions
+## Permissions
 
-The API user to communicate with Jira needs to have the "Admin" rights for a project where Releases are to be created.
+**NOTE**
+The API user used to communicate with Jira needs to have the "Admin" rights for a project where Releases are to be created.
