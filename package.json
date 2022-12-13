@@ -29,7 +29,6 @@
     "url": "https://github.com/rodush/github-action-jira-release/issues"
   },
   "homepage": "https://github.com/rodush/github-action-jira-release#readme",
-  "type": "module",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-json": "^4.1.0",
