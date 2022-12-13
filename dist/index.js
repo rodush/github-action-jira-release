@@ -97016,7 +97016,7 @@ const JiraConfig = {
 
 const jiraClient = got.extend({
   prefixUrl: JiraConfig.JiraDomain,
-  auth: JiraConfig.JiraAuthCredentials,
+  ...JiraConfig.JiraAuthCredentials,
 });
 
 /**
