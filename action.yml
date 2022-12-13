@@ -1,5 +1,5 @@
 name: 'Sync Github and Jira Releases'
-description: 'Creates new Jira Release (version) when Github release is published. Updates Jira tickets included in the release, sets the "Fix versions" field.'
+description: 'Creates new Jira Release (version) when Github release is published. Updates tickets "Fix versions" field.'
 inputs:
   project_id:
     description: 'Id of the Jira project (int64)'
