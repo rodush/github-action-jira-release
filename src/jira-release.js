@@ -1,5 +1,5 @@
 import { context } from '@actions/github'
-import { core } from '@actions/core'
+import * as core from '@actions/core'
 
 import setFixVersion from './jira-issues-updater'
 import jiraClient from './jira-client'

@@ -4,7 +4,7 @@
  */
 
 import { context, getOctokit } from '@actions/github'
-import core from '@actions/core'
+import * as core from '@actions/core'
 
 const defaultApiParams = { owner: context.repo.owner, repo: context.repo.repo }
 const jiraTicketRegex = new RegExp(

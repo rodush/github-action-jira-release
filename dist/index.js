@@ -97064,19 +97064,19 @@ async function run() {
       .post('rest/api/3/version', {
         json: {
           name: jiraVersionName,
-          projectId: coreExports.core.getInput('project_id'),
+          projectId: coreExports.getInput('project_id'),
           description: name,
         },
       })
       .json();
 
-    coreExports.core.setOutput('jira_release_id', data ? data.id : '???');
-    coreExports.core.setOutput('jira_release_name', data ? data.name : '???');
+    coreExports.setOutput('jira_release_id', data ? data.id : '???');
+    coreExports.setOutput('jira_release_name', data ? data.name : '???');
 
     await setFixVersion(data.name);
   } catch (e) {
     console.error('Error', e);
-    coreExports.core.setFailed(e.toString());
+    coreExports.setFailed(e.toString());
   }
 }
 
