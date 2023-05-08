@@ -1,0 +1,7 @@
+{
+  "release": {
+    "type": "published",
+    "tag_name": "Demo release",
+    "tag": "v1.0.0"
+  }
+}
