@@ -87624,12 +87624,16 @@ const jiraTicketRegex = new RegExp(
   'i'
 );
 
-const github = getOctokit_1(process.env.GITHUB_TOKEN);
+const token = process.env.GITHUB_TOKEN;
+if (!token) throw new Error('GITHUB_TOKEN is not set')
+const github = getOctokit_1(token);
 
 async function getJiraTicketsFromCommits() {
-  const {
-    data: [latestTag, previousTag],
-  } = await github.repos.listTags({ ...defaultApiParams, per_page: 2 });
+  const { data: tags } = await github.rest.repos.listTags({
+    ...defaultApiParams,
+    per_page: 2,
+  });
+  const [latestTag, previousTag] = tags;
 
   const [latestCommit, previousCommit] = await Promise.all([
     github.repos.getCommit({
