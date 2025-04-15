@@ -97059,16 +97059,19 @@ async function run() {
     const { tag_name, name } = context.payload.release;
 
     let jiraVersionName = `${context.repo.repo}-${tag_name.replace(/^v/, '')}`;
-	const data = await jiraClient.post('rest/api/3/version', {
-		json: {
-		  name: jiraVersionName,
-		  projectId: coreExports.getInput('project_id'),
-		  description: name,
-		},
-	  }).json();
 
-    coreExports.setOutput('jira_release_id', data.id);
-    coreExports.setOutput('jira_release_name', data.name);
+    const data = await jiraClient
+      .post('rest/api/3/version', {
+        json: {
+          name: jiraVersionName,
+          projectId: coreExports.getInput('project_id'),
+          description: name,
+        },
+      })
+      .json();
+
+    coreExports.setOutput('jira_release_id', data ? data.id : '???');
+    coreExports.setOutput('jira_release_name', data ? data.name : '???');
 
     await setFixVersion(data.name);
   } catch (e) {
