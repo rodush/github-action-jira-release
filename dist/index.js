@@ -97032,20 +97032,30 @@ const jiraClient = got.extend({
  */
 
 async function updateJiraTickets(tickets, jiraVersion) {
-  const promises = tickets.map((t) => {
-    return jiraClient
-      .put(`rest/api/3/issue/${t}`, {
-        json: {
-          update: {
-            fixVersions: [
-              {
-                add: { name: jiraVersion },
-              },
-            ],
+  const promises = tickets.map(async (t) => {
+    try {
+      const response = await jiraClient
+        .put(`rest/api/3/issue/${t}`, {
+          json: {
+            update: {
+              fixVersions: [
+                {
+                  add: { name: jiraVersion },
+                },
+              ],
+            },
           },
-        },
-      })
-      .json()
+        })
+        .json();
+
+      return response
+    } catch (error) {
+      console.error(
+        `Failed to update issue ${t}:`,
+        error.response?.body || error
+      );
+      throw error
+    }
   });
 
   return await Promise.all(promises)
