@@ -12,7 +12,9 @@ const jiraTicketRegex = new RegExp(
   'i'
 )
 
-const github = getOctokit(process.env.GITHUB_TOKEN)
+const token = process.env.GITHUB_TOKEN;
+if (!token) throw new Error('GITHUB_TOKEN is not set');
+const github = getOctokit(token);
 
 async function getJiraTicketsFromCommits() {
   const {
