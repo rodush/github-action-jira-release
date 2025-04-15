@@ -88948,6 +88948,7 @@ const statusCodeCacheableByDefault = new Set([
     206,
     300,
     301,
+    308,
     404,
     405,
     410,
@@ -89020,10 +89021,10 @@ function parseCacheControl(header) {
 
     // TODO: When there is more than one value present for a given directive (e.g., two Expires header fields, multiple Cache-Control: max-age directives),
     // the directive's value is considered invalid. Caches are encouraged to consider responses that have invalid freshness information to be stale
-    const parts = header.trim().split(/\s*,\s*/); // TODO: lame parsing
+    const parts = header.trim().split(/,/);
     for (const part of parts) {
-        const [k, v] = part.split(/\s*=\s*/, 2);
-        cc[k] = v === undefined ? true : v.replace(/^"|"$/g, ''); // TODO: lame unquoting
+        const [k, v] = part.split(/=/, 2);
+        cc[k.trim()] = v === undefined ? true : v.trim().replace(/^"|"$/g, '');
     }
 
     return cc;
@@ -90260,6 +90261,7 @@ class CacheableRequest {
                     const cachek = this.cache;
                     cachek.once('error', errorHandler);
                     ee.on('error', () => cachek.removeListener('error', errorHandler));
+                    ee.on('response', () => cachek.removeListener('error', errorHandler));
                 }
                 try {
                     await get(options);
@@ -97057,21 +97059,16 @@ async function run() {
     const { tag_name, name } = context.payload.release;
 
     let jiraVersionName = `${context.repo.repo}-${tag_name.replace(/^v/, '')}`;
+	const data = await jiraClient.post('rest/api/3/version', {
+		json: {
+		  name: jiraVersionName,
+		  projectId: coreExports.getInput('project_id'),
+		  description: name,
+		},
+	  }).json();
 
-    const {
-      body: { data },
-    } = await jiraClient
-      .post('rest/api/3/version', {
-        json: {
-          name: jiraVersionName,
-          projectId: coreExports.getInput('project_id'),
-          description: name,
-        },
-      })
-      .json();
-
-    coreExports.setOutput('jira_release_id', data ? data.id : '???');
-    coreExports.setOutput('jira_release_name', data ? data.name : '???');
+    coreExports.setOutput('jira_release_id', data.id);
+    coreExports.setOutput('jira_release_name', data.name);
 
     await setFixVersion(data.name);
   } catch (e) {
