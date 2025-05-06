@@ -12,19 +12,23 @@ const jiraTicketRegex = new RegExp(
   'i'
 )
 
-const github = getOctokit(process.env.GITHUB_TOKEN)
+const token = process.env.GITHUB_TOKEN
+if (!token) throw new Error('GITHUB_TOKEN is not set')
+const github = getOctokit(token)
 
 async function getJiraTicketsFromCommits() {
-  const {
-    data: [latestTag, previousTag],
-  } = await github.repos.listTags({ ...defaultApiParams, per_page: 2 })
+  const { data: tags } = await github.rest.repos.listTags({
+    ...defaultApiParams,
+    per_page: 2,
+  })
+  const [latestTag, previousTag] = tags
 
   const [latestCommit, previousCommit] = await Promise.all([
-    github.repos.getCommit({
+    github.rest.repos.getCommit({
       ...defaultApiParams,
       ref: latestTag.commit.sha,
     }),
-    github.repos.getCommit({
+    github.rest.repos.getCommit({
       ...defaultApiParams,
       ref: previousTag.commit.sha,
     }),
@@ -35,7 +39,7 @@ async function getJiraTicketsFromCommits() {
     new Date(previousCommit.data.commit.committer.date).valueOf() + 1000
   ).toISOString()
 
-  const commits = await github.repos.listCommits({
+  const commits = await github.rest.repos.listCommits({
     ...defaultApiParams,
     since,
     until: latestCommit.data.commit.committer.date,

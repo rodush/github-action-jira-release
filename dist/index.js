@@ -87624,19 +87624,23 @@ const jiraTicketRegex = new RegExp(
   'i'
 );
 
-const github = getOctokit_1(process.env.GITHUB_TOKEN);
+const token = process.env.GITHUB_TOKEN;
+if (!token) throw new Error('GITHUB_TOKEN is not set')
+const github = getOctokit_1(token);
 
 async function getJiraTicketsFromCommits() {
-  const {
-    data: [latestTag, previousTag],
-  } = await github.repos.listTags({ ...defaultApiParams, per_page: 2 });
+  const { data: tags } = await github.rest.repos.listTags({
+    ...defaultApiParams,
+    per_page: 2,
+  });
+  const [latestTag, previousTag] = tags;
 
   const [latestCommit, previousCommit] = await Promise.all([
-    github.repos.getCommit({
+    github.rest.repos.getCommit({
       ...defaultApiParams,
       ref: latestTag.commit.sha,
     }),
-    github.repos.getCommit({
+    github.rest.repos.getCommit({
       ...defaultApiParams,
       ref: previousTag.commit.sha,
     }),
@@ -87647,7 +87651,7 @@ async function getJiraTicketsFromCommits() {
     new Date(previousCommit.data.commit.committer.date).valueOf() + 1000
   ).toISOString();
 
-  const commits = await github.repos.listCommits({
+  const commits = await github.rest.repos.listCommits({
     ...defaultApiParams,
     since,
     until: latestCommit.data.commit.committer.date,
@@ -88948,6 +88952,7 @@ const statusCodeCacheableByDefault = new Set([
     206,
     300,
     301,
+    308,
     404,
     405,
     410,
@@ -89020,10 +89025,10 @@ function parseCacheControl(header) {
 
     // TODO: When there is more than one value present for a given directive (e.g., two Expires header fields, multiple Cache-Control: max-age directives),
     // the directive's value is considered invalid. Caches are encouraged to consider responses that have invalid freshness information to be stale
-    const parts = header.trim().split(/\s*,\s*/); // TODO: lame parsing
+    const parts = header.trim().split(/,/);
     for (const part of parts) {
-        const [k, v] = part.split(/\s*=\s*/, 2);
-        cc[k] = v === undefined ? true : v.replace(/^"|"$/g, ''); // TODO: lame unquoting
+        const [k, v] = part.split(/=/, 2);
+        cc[k.trim()] = v === undefined ? true : v.trim().replace(/^"|"$/g, '');
     }
 
     return cc;
@@ -90260,6 +90265,7 @@ class CacheableRequest {
                     const cachek = this.cache;
                     cachek.once('error', errorHandler);
                     ee.on('error', () => cachek.removeListener('error', errorHandler));
+                    ee.on('response', () => cachek.removeListener('error', errorHandler));
                 }
                 try {
                     await get(options);
@@ -97026,20 +97032,30 @@ const jiraClient = got.extend({
  */
 
 async function updateJiraTickets(tickets, jiraVersion) {
-  const promises = tickets.map((t) => {
-    return jiraClient
-      .put(`rest/api/3/issue/${t}`, {
-        json: {
-          update: {
-            fixVersions: [
-              {
-                add: { name: jiraVersion },
-              },
-            ],
+  const promises = tickets.map(async (t) => {
+    try {
+      const response = await jiraClient
+        .put(`rest/api/3/issue/${t}`, {
+          json: {
+            update: {
+              fixVersions: [
+                {
+                  add: { name: jiraVersion },
+                },
+              ],
+            },
           },
-        },
-      })
-      .json()
+        })
+        .json();
+
+      return response
+    } catch (error) {
+      console.error(
+        `Failed to update issue ${t}:`,
+        error.response?.body || error
+      );
+      throw error
+    }
   });
 
   return await Promise.all(promises)
@@ -97058,9 +97074,7 @@ async function run() {
 
     let jiraVersionName = `${context.repo.repo}-${tag_name.replace(/^v/, '')}`;
 
-    const {
-      body: { data },
-    } = await jiraClient
+    const data = await jiraClient
       .post('rest/api/3/version', {
         json: {
           name: jiraVersionName,
