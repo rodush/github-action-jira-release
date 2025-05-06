@@ -2,6 +2,11 @@
 
 The purpose of this github action is to synchronize Releases in Github with the Releases in Jira (Cloud).
 
+## Requirements
+
+Node 20+
+NPM 10+
+
 ## How it works
 
 When a new Pre-Release is published in Github (essentially, when a new tag is created), the `release` event of type `published` is emitted. It is possible to configure GHA workflow to react on that event.

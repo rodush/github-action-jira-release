@@ -6,7 +6,7 @@ export default {
   input: "./src/jira-release.js",
   output: {
     file: "./dist/index.js",
-    format: "cjs",
+    format: "esm",
     exports: "auto",
   },
   plugins: [

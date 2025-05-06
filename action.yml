@@ -10,7 +10,6 @@ inputs:
   project_key:
     description: 'Project key. Used to pick ticket ids from the commit messages'
     required: true
-    default: "SLI"
 outputs:
   jira_release_id:
     description: 'Jira Release ID'
