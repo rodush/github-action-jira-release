@@ -30,11 +30,11 @@
   },
   "homepage": "https://github.com/rodush/github-action-jira-release#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.1",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
     "prettier": "^2.7.1",
-    "rollup": "^2.79.2"
+    "rollup": "^4.22.4"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
