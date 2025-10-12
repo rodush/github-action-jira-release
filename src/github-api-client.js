@@ -8,7 +8,7 @@ import * as core from '@actions/core'
 
 const defaultApiParams = { owner: context.repo.owner, repo: context.repo.repo }
 const jiraTicketRegex = new RegExp(
-  `^(${core.getInput('project_key')}-\\d+):?\\s?.+`,
+  `^.*(${core.getInput('project_key')}-\\d+).*`,
   'i'
 )
 
