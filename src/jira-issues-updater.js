@@ -8,6 +8,9 @@ import getJiraTicketsFromCommits from './github-api-client'
 import jiraClient from './jira-client'
 
 async function updateJiraTickets(tickets, jiraVersion) {
+  console.info(
+    'Tickets are: ' + tickets + ' and jira version is: ' + jiraVersion
+  )
   const promises = tickets.map(async (t) => {
     try {
       const response = await jiraClient
@@ -23,6 +26,8 @@ async function updateJiraTickets(tickets, jiraVersion) {
           },
         })
         .json()
+
+      console.debug('Ticket: ' + t + ' was added to the release')
 
       return response
     } catch (error) {
@@ -41,7 +46,9 @@ async function setFixVersion(jiraVersion) {
   return getJiraTicketsFromCommits()
     .then((t) => updateJiraTickets(t, jiraVersion))
     .catch((e) => console.error(e))
-    .then(() => console.info('Done!'))
+    .then(() => {
+      console.info('Done creating the version and updating tickets!')
+    })
 }
 
 export default setFixVersion

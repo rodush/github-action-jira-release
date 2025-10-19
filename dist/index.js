@@ -31249,7 +31249,7 @@ var coreExports = requireCore();
 
 const defaultApiParams = { owner: githubExports.context.repo.owner, repo: githubExports.context.repo.repo };
 const jiraTicketRegex = new RegExp(
-  `^(${coreExports.getInput('project_key')}-\\d+):?\\s?.+`,
+  `^.*(${coreExports.getInput('project_key')}-\\d+).*`,
   'i'
 );
 
@@ -42010,6 +42010,9 @@ const jiraClient = got.extend({
 
 
 async function updateJiraTickets(tickets, jiraVersion) {
+  console.info(
+    'Tickets are: ' + tickets + ' and jira version is: ' + jiraVersion
+  );
   const promises = tickets.map(async (t) => {
     try {
       const response = await jiraClient
@@ -42025,6 +42028,8 @@ async function updateJiraTickets(tickets, jiraVersion) {
           },
         })
         .json();
+
+      console.debug('Ticket: ' + t + ' was added to the release');
 
       return response
     } catch (error) {
@@ -42043,7 +42048,9 @@ async function setFixVersion(jiraVersion) {
   return getJiraTicketsFromCommits()
     .then((t) => updateJiraTickets(t, jiraVersion))
     .catch((e) => console.error(e))
-    .then(() => console.info('Done!'))
+    .then(() => {
+      console.info('Done creating the version and updating tickets!');
+    })
 }
 
 async function run() {
@@ -42051,16 +42058,29 @@ async function run() {
     const { tag_name, name } = githubExports.context.payload.release;
 
     let jiraVersionName = `${githubExports.context.repo.repo}-${tag_name.replace(/^v/, '')}`;
-
     const data = await jiraClient
       .post('rest/api/3/version', {
         json: {
           name: jiraVersionName,
           projectId: coreExports.getInput('project_id'),
           description: name,
+          released: coreExports.getInput('released'),
         },
       })
       .json();
+
+    console.log('Jira Release created with body: ', data);
+    console.info(
+      data
+        ? 'Release URL: https://' +
+            process.env.ATLASSIAN_CLOUD_DOMAIN +
+            '.atlassian.net/projects/' +
+            data.project +
+            '/versions/' +
+            data.id +
+            '/tab/release-report-all-issues'
+        : 'Error Occurred'
+    );
 
     coreExports.setOutput('jira_release_id', data ? data.id : '???');
     coreExports.setOutput('jira_release_name', data ? data.name : '???');
