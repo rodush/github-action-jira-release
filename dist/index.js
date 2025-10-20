@@ -31265,7 +31265,7 @@ async function getJiraTicketsFromCommits() {
     per_page: 2,
   });
 
-  console.log('Retrieved List of tags: ' + tags);
+  console.log('Retrieved List of tags: ' + tags.toString());
 
   const [latestTag, previousTag] = tags;
 
@@ -31282,9 +31282,9 @@ async function getJiraTicketsFromCommits() {
 
   console.log(
     'List of latest commits are: ' +
-      latestCommit +
+      latestCommit.toString() +
       ' And Previous Commits are: ' +
-      previousCommit
+      previousCommit.toString()
   );
 
   // We are shifting the last commit's date one second, so to not include the commit from the previous tag
@@ -31298,7 +31298,7 @@ async function getJiraTicketsFromCommits() {
     until: latestCommit.data.commit.committer.date,
   });
 
-  console.log('Commits for this release are: ' + commits);
+  console.log('Commits for this release are: ' + commits.toString());
 
   const jiraTickets = commits.data
     .map((c) => {
@@ -31308,7 +31308,7 @@ async function getJiraTicketsFromCommits() {
     .filter((el) => el);
 
   console.log(
-    'Commits for this tag that matches Jira ticket are: ' + jiraTickets
+    'Commits for this tag that matches Jira ticket are: ' + jiraTickets.toString()
   );
 
   return Array.from(new Set(jiraTickets)) // use Set to eliminate duplicate entries

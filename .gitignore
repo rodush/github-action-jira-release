@@ -3,3 +3,4 @@ node_modules
 workflows
 test
 .idea
+.DS_Store
