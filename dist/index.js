@@ -42062,9 +42062,9 @@ async function run() {
       .post('rest/api/3/version', {
         json: {
           name: jiraVersionName,
-          projectId: coreExports.getInput('project_id'),
+          projectId: parseInt(coreExports.getInput('project_id')),
           description: name,
-          released: coreExports.getInput('released'),
+          released: coreExports.getInput('released') === 'true',
         },
       })
       .json();
