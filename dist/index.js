@@ -31258,10 +31258,15 @@ if (!token) throw new Error('GITHUB_TOKEN is not set')
 const github = githubExports.getOctokit(token);
 
 async function getJiraTicketsFromCommits() {
+  console.log('Getting Jira Tickets From Commits');
+
   const { data: tags } = await github.rest.repos.listTags({
     ...defaultApiParams,
     per_page: 2,
   });
+
+  console.log('Retrieved List of tags: ' + tags);
+
   const [latestTag, previousTag] = tags;
 
   const [latestCommit, previousCommit] = await Promise.all([
@@ -31275,6 +31280,13 @@ async function getJiraTicketsFromCommits() {
     }),
   ]);
 
+  console.log(
+    'List of latest commits are: ' +
+      latestCommit +
+      ' And Previous Commits are: ' +
+      previousCommit
+  );
+
   // We are shifting the last commit's date one second, so to not include the commit from the previous tag
   const since = new Date(
     new Date(previousCommit.data.commit.committer.date).valueOf() + 1000
@@ -31286,13 +31298,18 @@ async function getJiraTicketsFromCommits() {
     until: latestCommit.data.commit.committer.date,
   });
 
+  console.log('Commits for this release are: ' + commits);
+
   const jiraTickets = commits.data
     .map((c) => {
       const regexMatches = jiraTicketRegex.exec(c.commit.message) || [];
-
       return regexMatches[1]
     })
     .filter((el) => el);
+
+  console.log(
+    'Commits for this tag that matches Jira ticket are: ' + jiraTickets
+  );
 
   return Array.from(new Set(jiraTickets)) // use Set to eliminate duplicate entries
 }
@@ -42062,9 +42079,9 @@ async function run() {
       .post('rest/api/3/version', {
         json: {
           name: jiraVersionName,
-          projectId: parseInt(coreExports.getInput('project_id')),
+          projectId: coreExports.getInput('project_id'),
           description: name,
-          released: coreExports.getInput('released') === 'true',
+          released: coreExports.getInput('released'),
         },
       })
       .json();
@@ -42072,10 +42089,10 @@ async function run() {
     console.log('Jira Release created with body: ', data);
     console.info(
       data
-        ? 'Release URL: https://' +
+        ? 'Release URL: ' +
             process.env.ATLASSIAN_CLOUD_DOMAIN +
-            '.atlassian.net/projects/' +
-            data.project +
+            '/projects/' +
+            coreExports.getInput('project_key') +
             '/versions/' +
             data.id +
             '/tab/release-report-all-issues'

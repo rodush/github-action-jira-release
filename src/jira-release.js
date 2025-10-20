@@ -13,9 +13,9 @@ async function run() {
       .post('rest/api/3/version', {
         json: {
           name: jiraVersionName,
-          projectId: parseInt(core.getInput('project_id')),
+          projectId: core.getInput('project_id'),
           description: name,
-          released: core.getInput('released') === 'true',
+          released: core.getInput('released'),
         },
       })
       .json()
@@ -23,10 +23,10 @@ async function run() {
     console.log('Jira Release created with body: ', data)
     console.info(
       data
-        ? 'Release URL: https://' +
+        ? 'Release URL: ' +
             process.env.ATLASSIAN_CLOUD_DOMAIN +
-            '.atlassian.net/projects/' +
-            data.project +
+            '/projects/' +
+            core.getInput('project_key') +
             '/versions/' +
             data.id +
             '/tab/release-report-all-issues'
