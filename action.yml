@@ -10,6 +10,11 @@ inputs:
   project_key:
     description: 'Project key. Used to pick ticket ids from the commit messages'
     required: true
+  released:
+    type: boolean
+    description: 'Mark release status as Released'
+    required: false
+    default: false
 outputs:
   jira_release_id:
     description: 'Jira Release ID'

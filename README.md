@@ -15,8 +15,6 @@ The `Jira Release` action will fetch details about the Release - the name and th
 
 From each commit's summary the JIRA issue number will be extracted.
 
-**NOTE**: *The action is built with the assumption that commit messages are written in a certain format: `JIRA-123: Commit summary message` (essentially, it is the format supported by the commitizen project, see <https://www.npmjs.com/package/commitlint-config-jira>).*
-
 Next, the Action will go to Jira (via REST API) and create a new Release named after the repository name concatenated via '-' with the tag name.
 
 **NOTE**: *If tag's name starts with the `v` prefix, then the prefix will be dropped.*
