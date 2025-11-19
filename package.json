@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/rodush/github-action-jira-release#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "28.0.3",
+    "@rollup/plugin-commonjs": "29.0.0",
     "@rollup/plugin-json": "6.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
     "prettier": "3.6.2",
