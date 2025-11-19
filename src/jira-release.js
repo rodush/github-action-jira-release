@@ -6,7 +6,7 @@ import jiraClient from './jira-client'
 
 async function run() {
   try {
-    const { tag_name, name } = context.payload.release
+    const { tag_name, name, body } = context.payload.release
 
     let jiraVersionName = `${context.repo.repo}-${tag_name.replace(/^v/, '')}`
 
@@ -15,7 +15,7 @@ async function run() {
         json: {
           name: jiraVersionName,
           projectId: core.getInput('project_id'),
-          description: name,
+          description: body ?? name,
         },
       })
       .json()
