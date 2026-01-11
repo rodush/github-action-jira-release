@@ -1,5 +1,5 @@
 import { context } from '@actions/github'
-import * as core from '@actions/core'
+import { getInput, setFailed, setOutput} from '@actions/core'
 
 import setFixVersion from './jira-issues-updater'
 import jiraClient from './jira-client'
@@ -14,19 +14,19 @@ async function run() {
       .post('rest/api/3/version', {
         json: {
           name: jiraVersionName,
-          projectId: core.getInput('project_id'),
+          projectId: getInput('project_id'),
           description: body ?? name,
         },
       })
       .json()
 
-    core.setOutput('jira_release_id', data ? data.id : '???')
-    core.setOutput('jira_release_name', data ? data.name : '???')
+    setOutput('jira_release_id', data ? data.id : 'N/A')
+    setOutput('jira_release_name', data ? data.name : 'N/A')
 
     await setFixVersion(data.name)
   } catch (e) {
     console.error('Error', e)
-    core.setFailed(e.toString())
+    setFailed(e.toString())
   }
 }
 

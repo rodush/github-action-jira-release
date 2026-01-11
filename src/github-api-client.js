@@ -4,11 +4,11 @@
  */
 
 import { context, getOctokit } from '@actions/github'
-import * as core from '@actions/core'
+import { getInput } from '@actions/core'
 
 const defaultApiParams = { owner: context.repo.owner, repo: context.repo.repo }
 const jiraTicketRegex = new RegExp(
-  `^(${core.getInput('project_key')}-\\d+):?\\s?.+`,
+  `^(${getInput('project_key')}-\\d+):?\\s?.+`,
   'i'
 )
 
