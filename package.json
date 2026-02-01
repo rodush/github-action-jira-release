@@ -38,7 +38,7 @@
     "rollup": "4.55.1"
   },
   "dependencies": {
-    "@actions/core": "2.0.2",
+    "@actions/core": "3.0.0",
     "@actions/github": "7.0.0",
     "got": "14.6.6"
   }
