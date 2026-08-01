@@ -88,3 +88,31 @@ The action requires 4 environment variables:
 
 **NOTE**
 The API user used to communicate with Jira needs to have the "Admin" rights for a project where Releases are to be created.
+
+## Local testing
+
+It might be useful to see whether compiled code runs fine, i.e. after updating npm packages like `github/actions`, `github/core`, or any other.
+
+First of all, try to compile the code using `rollup`:
+
+```sh
+rollup
+```
+
+Also, you can try invoke compiled code (in the `dist/index.js`). Github Action relies on the data from certain context, which might be mocked using `GITHUB_*` environment variables.
+
+To simulate the "release" event, the `test/event.json` is prepared with the basic data used by the action.
+
+Example invocation (with env variables inlined):
+
+```sh
+GITHUB_EVENT_PATH=./test/event.json \
+GITHUB_REPOSITORY=rodush/github-action-jira-release \
+node --env-file=.env dist/index.js
+```
+
+It probably will crash if you don't provide a valid Jira URL:
+
+> ::error::RequestError: Invalid URL
+
+But at least you can check that the rest of the scrip works fine.
