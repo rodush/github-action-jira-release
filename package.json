@@ -4,8 +4,8 @@
   "description": "Github Action which creates a new release in Jira to synchronize with the Release in Github.",
   "exports": "./dist/index.js",
   "engines": {
-    "node": ">=20",
-    "npm": ">=10"
+    "node": ">=24",
+    "npm": ">=11"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",

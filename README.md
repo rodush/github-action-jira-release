@@ -4,8 +4,8 @@ The purpose of this github action is to synchronize Releases in Github with the 
 
 ## Requirements
 
-Node 20+
-NPM 10+
+Node 24+
+NPM 11+
 
 ## How it works
 
