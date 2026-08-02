@@ -1,6 +1,6 @@
 {
   "name": "jira-release",
-  "version": "1.0.0",
+  "version": "2.3.0",
   "description": "Github Action which creates a new release in Jira to synchronize with the Release in Github.",
   "exports": "./dist/index.js",
   "engines": {
