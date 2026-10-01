@@ -35,7 +35,7 @@
     "@rollup/plugin-json": "6.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
     "prettier": "3.9.6",
-    "rollup": "4.62.3"
+    "rollup": "4.63.5"
   },
   "dependencies": {
     "@actions/core": "3.0.1",
