@@ -40,6 +40,6 @@
   "dependencies": {
     "@actions/core": "3.0.1",
     "@actions/github": "9.1.1",
-    "got": "15.1.0"
+    "got": "16.0.0"
   }
 }
